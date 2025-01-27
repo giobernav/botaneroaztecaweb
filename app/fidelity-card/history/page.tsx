@@ -22,15 +22,15 @@ import { Chip, ChipProps } from "@heroui/chip";
 import { User } from "@heroui/user";
 import { Pagination } from "@heroui/pagination";
 
-export type IconSvgProps = SVGProps<SVGSVGElement> & {
+type IconSvgProps = SVGProps<SVGSVGElement> & {
   size?: number;
 };
 
-export function capitalize(s: string) {
+function capitalize(s: string) {
   return s ? s.charAt(0).toUpperCase() + s.slice(1).toLowerCase() : "";
 }
 
-export const VerticalDotsIcon = ({
+const VerticalDotsIcon = ({
   size = 24,
   width,
   height,
@@ -55,7 +55,7 @@ export const VerticalDotsIcon = ({
   );
 };
 
-export const ChevronDownIcon = ({
+const ChevronDownIcon = ({
   strokeWidth = 1.5,
   ...otherProps
 }: IconSvgProps) => {
@@ -82,7 +82,7 @@ export const ChevronDownIcon = ({
   );
 };
 
-export const columns = [
+const columns = [
   { name: "ID", uid: "id", sortable: true },
   { name: "NAME", uid: "name", sortable: true },
   { name: "AGE", uid: "age", sortable: true },
@@ -93,13 +93,13 @@ export const columns = [
   { name: "ACTIONS", uid: "actions" },
 ];
 
-export const statusOptions = [
+const statusOptions = [
   { name: "Active", uid: "active" },
   { name: "Paused", uid: "paused" },
   { name: "Vacation", uid: "vacation" },
 ];
 
-export const users = [
+const users = [
   {
     id: 1,
     name: "Tony Reichert",
@@ -313,7 +313,6 @@ const INITIAL_VISIBLE_COLUMNS = ["name", "role", "status", "actions"];
 type User = (typeof users)[0];
 
 export default function HistoryRewardsPage() {
-  const [filterValue, setFilterValue] = useState("");
   const [selectedKeys, setSelectedKeys] = useState<Selection>(new Set([]));
   const [visibleColumns, setVisibleColumns] = useState<Selection>(
     new Set(INITIAL_VISIBLE_COLUMNS)
@@ -327,8 +326,6 @@ export default function HistoryRewardsPage() {
 
   const [page, setPage] = useState(1);
 
-  const hasSearchFilter = Boolean(filterValue);
-
   const headerColumns = React.useMemo(() => {
     if (visibleColumns === "all") return columns;
 
@@ -340,11 +337,6 @@ export default function HistoryRewardsPage() {
   const filteredItems = React.useMemo(() => {
     let filteredUsers = [...users];
 
-    if (hasSearchFilter) {
-      filteredUsers = filteredUsers.filter((user) =>
-        user.name.toLowerCase().includes(filterValue.toLowerCase())
-      );
-    }
     if (
       statusFilter !== "all" &&
       Array.from(statusFilter).length !== statusOptions.length
@@ -355,7 +347,7 @@ export default function HistoryRewardsPage() {
     }
 
     return filteredUsers;
-  }, [users, filterValue, statusFilter]);
+  }, [users, statusFilter]);
 
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
@@ -526,14 +518,7 @@ export default function HistoryRewardsPage() {
         </div>
       </div>
     );
-  }, [
-    filterValue,
-    statusFilter,
-    visibleColumns,
-    onRowsPerPageChange,
-    users.length,
-    hasSearchFilter,
-  ]);
+  }, [statusFilter, visibleColumns, onRowsPerPageChange, users.length]);
 
   const bottomContent = React.useMemo(() => {
     return (
@@ -572,7 +557,7 @@ export default function HistoryRewardsPage() {
         </div>
       </div>
     );
-  }, [selectedKeys, items.length, page, pages, hasSearchFilter]);
+  }, [selectedKeys, items.length, page, pages]);
 
   return (
     <Table
