@@ -3,6 +3,9 @@
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 
+import { Button } from "@heroui/button";
+import { Icon } from "@iconify/react";
+
 export function ThemeSwitcher() {
   const [mounted, setMounted] = useState(false);
   const { theme, setTheme } = useTheme();
@@ -14,10 +17,17 @@ export function ThemeSwitcher() {
   if (!mounted) return null;
 
   return (
-    <div>
-      The current theme is: {theme}
-      <button onClick={() => setTheme("light")}>Light Mode</button>
-      <button onClick={() => setTheme("dark")}>Dark Mode</button>
-    </div>
+    <Button
+      isIconOnly
+      radius="full"
+      variant="light"
+      onPress={() => setTheme(theme === "dark" ? "light" : "dark")}
+    >
+      <Icon
+        className="text-default-500"
+        icon={theme === "dark" ? "solar:sun-linear" : "solar:moon-linear"}
+        width={24}
+      />
+    </Button>
   );
 }
