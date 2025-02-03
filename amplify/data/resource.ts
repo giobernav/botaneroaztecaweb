@@ -6,13 +6,44 @@ adding a new "isDone" field as a boolean. The authorization rule below
 specifies that any user authenticated via an API key can "create", "read",
 "update", and "delete" any "Todo" records.
 =========================================================================*/
-const schema = a.schema({
-  Todo: a
-    .model({
-      content: a.string(),
-    })
-    .authorization((allow) => [allow.publicApiKey()]),
-});
+const schema = a
+  .schema({
+    Customer: a.model({
+      name: a.string(),
+      lastName: a.string(),
+      birth: a.date(),
+      status: a.enum(["ACTIVE", "INACTIVE"]),
+      cognitoId: a.id(),
+      email: a.email(),
+      phone: a.phone(),
+      visits: a.hasMany("Visit", "customerId"),
+      rewards: a.hasMany("CustomerReward", "customerId"),
+    }),
+    Reward: a.model({
+      cost: a.integer(),
+      title: a.string(),
+      description: a.string(),
+      status: a.enum(["ACTIVE", "INACTIVE"]),
+      customers: a.hasMany("CustomerReward", "rewardId"),
+    }),
+    Visit: a.model({
+      datetime: a.datetime(),
+      billAmount: a.integer(),
+      table: a.string(),
+      status: a.enum(["ACTIVE", "INACTIVE"]),
+      customerId: a.id().required(),
+      customer: a.belongsTo("Customer", "customerId"),
+    }),
+    CustomerReward: a.model({
+      customerId: a.id().required(),
+      rewardId: a.id().required(),
+      customer: a.belongsTo("Customer", "customerId"),
+      reward: a.belongsTo("Reward", "rewardId"),
+      validity: a.datetime(),
+      status: a.enum(["ACTIVE", "INACTIVE", "EXPIRED", "REDEEMED"]),
+    }),
+  })
+  .authorization((allow) => allow.publicApiKey());
 
 export type Schema = ClientSchema<typeof schema>;
 
