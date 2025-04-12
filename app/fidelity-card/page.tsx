@@ -1,5 +1,3 @@
-"use client";
-
 import { Button } from "@heroui/button";
 import { Card, CardBody, CardFooter } from "@heroui/card";
 import { Icon } from "@iconify/react";
@@ -21,7 +19,7 @@ export default function FidelityCardPage() {
 
       <div className="max-w-xs mx-auto mt-4 gap-3 grid grid-cols-3">
         {Array.from(new Array(15)).map((_, index) => (
-          <Card key={index} fullWidth isDisabled>
+          <Card key={index} fullWidth isDisabled={index !== 0}>
             <CardBody className="inline-flex items-center justify-center">
               <span>
                 <Icon
@@ -29,7 +27,7 @@ export default function FidelityCardPage() {
                   icon="mdi-light:taco"
                   width={64}
                 />
-              </span>{" "}
+              </span>
             </CardBody>
           </Card>
         ))}

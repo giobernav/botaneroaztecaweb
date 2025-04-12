@@ -46,8 +46,12 @@ export const config = {
      * - favicon.ico (favicon file)
      * - login
      */
+    "/profile",
+    "/loyalty",
+    "/loyalty/(.*)",
     "/fidelity-card",
     "/fidelity-card/(.*)",
+    "/rewards/(.*)",
     // "/((?!api|_next/static|_next/image|favicon.ico|login).*)",
   ],
 };

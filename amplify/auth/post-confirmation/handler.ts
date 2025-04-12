@@ -1,0 +1,65 @@
+import type { PostConfirmationTriggerHandler } from "aws-lambda";
+
+import { type Schema } from "../../data/resource";
+import { Amplify } from "aws-amplify";
+import { authenticator } from "otplib";
+import { generateClient } from "aws-amplify/data";
+import { getAmplifyDataClientConfig } from "@aws-amplify/backend/function/runtime";
+import { env } from "$amplify/env/post-confirmation";
+import dayjs from "dayjs";
+
+const { resourceConfig, libraryOptions } = await getAmplifyDataClientConfig(
+  env
+);
+
+Amplify.configure(resourceConfig, libraryOptions);
+
+const client = generateClient<Schema>();
+
+export const handler: PostConfirmationTriggerHandler = async (event) => {
+  console.log("event.request", event.request);
+
+  try {
+    await client.models.Customer.create({
+      id: event.userName,
+      phone: event.request.userAttributes.phone_number,
+      secret: authenticator.generateSecret(),
+      owner: event.request.userAttributes.sub,
+      memberTier: "BRONZE",
+      tierEndDate: dayjs().add(1, "year").endOf("day").toISOString(),
+    });
+
+    // Find Reward
+    const { data: retrievedRewards } =
+      await client.models.Reward.listRewardByCategory({
+        category: "WELCOME",
+      });
+
+    if (retrievedRewards.length) {
+      // Crear CustomerReward de recompensa del perfil
+      await client.models.CustomerReward.create({
+        customerId: event.userName,
+        rewardId: retrievedRewards[0].id,
+        expiryDate: dayjs().add(1, "year").endOf("day").toISOString(),
+        status: "ACTIVE",
+        type: retrievedRewards[0].type,
+        category: retrievedRewards[0].category,
+      });
+      // Crear Visit con entryType = "TRIGGER" para asignar los puntos ganados por completar el perfil
+      await client.models.Visit.create({
+        datetime: dayjs().toISOString(),
+        billAmount: null,
+        pointsEarned: 1000,
+        table: null,
+        status: "ACTIVE",
+        customerId: event.userName,
+        entryType: "TRIGGER",
+      });
+    }
+  } catch (err) {
+    console.log("Error creating customer profile");
+    console.log("err", err);
+  }
+
+  return event;
+};

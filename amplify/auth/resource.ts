@@ -1,4 +1,6 @@
 import { defineAuth } from "@aws-amplify/backend";
+import { cognitoGetUserFcn } from "../functions/cognitoGetUser/resource";
+import { postConfirmationFcn } from "./post-confirmation/resource";
 
 /**
  * Define and configure your auth resource
@@ -8,4 +10,8 @@ export const auth = defineAuth({
   loginWith: {
     phone: true,
   },
+  triggers: {
+    postConfirmation: postConfirmationFcn,
+  },
+  access: (allow) => [allow.resource(cognitoGetUserFcn).to(["getUser"])],
 });
