@@ -113,6 +113,7 @@ const schema = a
     Company: a
       .model({
         id: a.id(),
+        name: a.string(),
         ddNextToken: a.string(),
         ddTimestamp: a.timestamp(),
         tierLevels: a.ref("TierLevel").array().required(),
