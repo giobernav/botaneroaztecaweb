@@ -19,7 +19,7 @@ const client = generateClient<Schema>();
 export const handler: PostConfirmationTriggerHandler = async (event) => {
   console.log("event.request", event.request);
 
-  const nanoid = customAlphabet("1234567890abcdefghijklmnopqrstvwxyz", 12);
+  const nanoid = customAlphabet("1234567890abcdefghijklmnopqrstvwxyz", 20);
 
   try {
     const customerParams = {
