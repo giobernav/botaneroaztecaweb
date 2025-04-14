@@ -16,6 +16,6 @@ export default async function LoginPage(props: {
   return !user ? (
     <Login nextUrl={next_url} />
   ) : (
-    redirect(next_url || "/fidelity-card")
+    redirect(next_url || "/loyalty")
   );
 }

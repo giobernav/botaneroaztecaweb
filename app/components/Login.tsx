@@ -142,7 +142,7 @@ function Login({ nextUrl }: { nextUrl?: string }) {
 
       if (confirmSignInNextStep.signInStep === "DONE") {
         console.log("Sign in successful!");
-        router.push(nextUrl || "/fidelity-card");
+        router.push(nextUrl || "/loyalty");
       }
     } else {
       const { nextStep: confirmSignUpNextStep } = await confirmSignUp({
@@ -156,7 +156,7 @@ function Login({ nextUrl }: { nextUrl?: string }) {
 
         if (nextStep.signInStep === "DONE") {
           console.log("Successfully signed in.");
-          router.push(nextUrl || "/fidelity-card");
+          router.push(nextUrl || "/loyalty");
         }
       }
 
