@@ -8,6 +8,7 @@ import { cognitoGetUserFcn } from "./functions/cognitoGetUser/resource";
 import { dDBCustomerStreamFcn } from "./functions/dDBCustomerStream/resource";
 import { dDBVisitStreamFcn } from "./functions/dDBVisitStream/resource";
 import { dailyDigestFcn } from "./jobs/daily-digest/resource";
+import { postConfirmationFcn } from "./auth/post-confirmation/resource";
 
 const backend = defineBackend({
   auth,
@@ -16,6 +17,7 @@ const backend = defineBackend({
   dDBCustomerStreamFcn,
   dDBVisitStreamFcn,
   dailyDigestFcn,
+  postConfirmationFcn,
 });
 
 const { cfnResources } = backend.auth.resources;

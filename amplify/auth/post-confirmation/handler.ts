@@ -2,11 +2,11 @@ import type { PostConfirmationTriggerHandler } from "aws-lambda";
 
 import { type Schema } from "../../data/resource";
 import { Amplify } from "aws-amplify";
-import { authenticator } from "otplib";
 import { generateClient } from "aws-amplify/data";
 import { getAmplifyDataClientConfig } from "@aws-amplify/backend/function/runtime";
 import { env } from "$amplify/env/post-confirmation";
 import dayjs from "dayjs";
+import { customAlphabet } from "nanoid";
 
 const { resourceConfig, libraryOptions } = await getAmplifyDataClientConfig(
   env
@@ -19,15 +19,19 @@ const client = generateClient<Schema>();
 export const handler: PostConfirmationTriggerHandler = async (event) => {
   console.log("event.request", event.request);
 
+  const nanoid = customAlphabet("1234567890abcdefghijklmnopqrstvwxyz", 12);
+
   try {
-    await client.models.Customer.create({
+    const customerParams = {
       id: event.userName,
       phone: event.request.userAttributes.phone_number,
-      secret: authenticator.generateSecret(),
+      secret: nanoid(),
       owner: event.request.userAttributes.sub,
       memberTier: "BRONZE",
       tierEndDate: dayjs().add(1, "year").endOf("day").toISOString(),
-    });
+    };
+    console.log("customerParams", customerParams);
+    await client.models.Customer.create(customerParams);
 
     // Find Reward
     const { data: retrievedRewards } =
