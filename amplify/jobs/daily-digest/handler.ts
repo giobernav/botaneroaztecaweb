@@ -51,7 +51,7 @@ export const handler: EventBridgeHandler<
     const company = await getCompany("botaneroazteca");
     const { tierLevels } = company!;
 
-    const sortedTierLevels = [...tierLevels]
+    const sortedTierLevels = [...tierLevels!]
       .sort((a, b) => a?.pointsRequired! - b?.pointsRequired!)
       .reverse();
 

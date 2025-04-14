@@ -116,7 +116,7 @@ const schema = a
         name: a.string(),
         ddNextToken: a.string(),
         ddTimestamp: a.timestamp(),
-        tierLevels: a.ref("TierLevel").array().required(),
+        tierLevels: a.ref("TierLevel").array(),
         currency: a.string().default("EUR"),
         lang: a.string().default("ES"),
         logo: a.string(),
