@@ -22,22 +22,26 @@ export const handler: PostConfirmationTriggerHandler = async (event) => {
   const nanoid = customAlphabet("1234567890abcdefghijklmnopqrstvwxyz", 20);
 
   try {
-    const customerParams = {
-      id: event.userName,
-      phone: event.request.userAttributes.phone_number,
-      secret: nanoid(),
-      owner: event.request.userAttributes.sub,
-      memberTier: "BRONZE",
-      tierEndDate: dayjs().add(1, "year").endOf("day").toISOString(),
-    };
-    console.log("customerParams", customerParams);
-    await client.models.Customer.create(customerParams);
+    const customerRes = await client.models.Customer.create(
+      {
+        id: event.userName,
+        phone: event.request.userAttributes.phone_number,
+        secret: nanoid(),
+        owner: event.request.userAttributes.sub,
+        memberTier: "BRONZE",
+        tierEndDate: dayjs().add(1, "year").endOf("day").toISOString(),
+        status: "ACTIVE",
+      },
+      { selectionSet: ["id", "memberTier", "phone", "status"] }
+    );
+    console.log("customerRes", customerRes.data, customerRes.errors);
 
     // Find Reward
     const { data: retrievedRewards } =
       await client.models.Reward.listRewardByCategory({
         category: "WELCOME",
       });
+    console.log("retrievedRewards", retrievedRewards);
 
     if (retrievedRewards.length) {
       // Crear CustomerReward de recompensa del perfil
