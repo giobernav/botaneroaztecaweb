@@ -24,22 +24,22 @@ export default function ScannerComp() {
 
         if (customerId && token) {
           // verificar token
-          const isValidToken = await verifyToken(customerId, token);
-          console.log("isValidToken", isValidToken);
+          // const isValidToken = await verifyToken(customerId, token);
+          // console.log("isValidToken", isValidToken);
 
-          if (isValidToken) {
-            // registrar visita
-            const formData = new FormData();
-            const result = await registerVisit("QR", customerId, {}, formData);
-            console.log("registerVisit result", result);
-            setMessage(
-              result.success
-                ? "Visita registrada correctamente!"
-                : result.errors?.[0]
-            );
-          } else {
-            setMessage("Código inválido, intenta de nuevo");
-          }
+          // if (isValidToken) {
+          // registrar visita
+          const formData = new FormData();
+          const result = await registerVisit("QR", customerId, token, formData);
+          console.log("registerVisit result", result);
+          setMessage(
+            result.success
+              ? "Visita registrada correctamente!"
+              : result.errors?.[0]
+          );
+          // } else {
+          //   setMessage("Código inválido, intenta de nuevo");
+          // }
         }
       }
     }
