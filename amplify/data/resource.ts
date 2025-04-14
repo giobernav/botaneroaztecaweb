@@ -118,6 +118,8 @@ const schema = a
         ddTimestamp: a.timestamp(),
         tierLevels: a.ref("TierLevel").array().required(),
         currency: a.string().default("EUR"),
+        lang: a.string().default("ES"),
+        logo: a.string(),
         pointExpirationDays: a.integer().default(365),
       })
       .authorization((allow) => [allow.authenticated("identityPool")]),
