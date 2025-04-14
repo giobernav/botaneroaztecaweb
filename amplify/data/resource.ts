@@ -15,6 +15,7 @@ const schema = a
   .schema({
     Customer: a
       .model({
+        id: a.id(),
         name: a.string(),
         lastName: a.string(),
         birthdate: a.date(),
@@ -27,6 +28,7 @@ const schema = a
         memberTier: a.id().required(), // 5, 10, 15%
         tierEndDate: a.datetime(), // ISOString end of day, from first visit
         profilePicture: a.string(),
+        owner: a.string(),
       })
       .authorization((allow) => [
         allow.owner(),
