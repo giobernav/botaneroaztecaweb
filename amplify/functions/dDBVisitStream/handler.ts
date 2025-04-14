@@ -59,7 +59,9 @@ export const handler: DynamoDBStreamHandler = async (event) => {
           dayjs().unix() > dayjs(retrievedCustomer?.tierEndDate).unix();
         // El periodo es: endTierDate - 1 año a la fecha actual
 
-        const company = await getCompany("botaneroazteca");
+        const company = await getCompany(
+          process.env.NEXT_PUBLIC_DEFAULT_COMPANY
+        );
         const { tierLevels } = company!;
 
         // Obtener los últimos CustomerReward recibibos en el periodo

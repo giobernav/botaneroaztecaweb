@@ -48,7 +48,7 @@ export const handler: EventBridgeHandler<
     // --- WELCOME (on post-confirmation)
     const rewards = await listRewards();
 
-    const company = await getCompany("botaneroazteca");
+    const company = await getCompany(process.env.NEXT_PUBLIC_DEFAULT_COMPANY);
     const { tierLevels } = company!;
 
     const sortedTierLevels = [...tierLevels!]
