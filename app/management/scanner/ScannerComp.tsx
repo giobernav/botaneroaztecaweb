@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { Scanner } from "@yudiel/react-qr-scanner";
-import { verifyToken } from "@/app/actions/totp";
 import { registerVisit } from "@/app/actions/visit";
 
 export default function ScannerComp() {
