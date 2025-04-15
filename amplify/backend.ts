@@ -9,6 +9,7 @@ import { dDBCustomerStreamFcn } from "./functions/dDBCustomerStream/resource";
 import { dDBVisitStreamFcn } from "./functions/dDBVisitStream/resource";
 import { dailyDigestFcn } from "./jobs/daily-digest/resource";
 import { postConfirmationFcn } from "./auth/post-confirmation/resource";
+import { storage } from "./storage/resource";
 
 const backend = defineBackend({
   auth,
@@ -18,6 +19,7 @@ const backend = defineBackend({
   dDBVisitStreamFcn,
   dailyDigestFcn,
   postConfirmationFcn,
+  storage,
 });
 
 const { cfnResources } = backend.auth.resources;
