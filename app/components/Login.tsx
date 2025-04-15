@@ -6,7 +6,6 @@ import { Input } from "@heroui/input";
 import { Tooltip } from "@heroui/tooltip";
 import { AnimatePresence, domAnimation, LazyMotion, m } from "framer-motion";
 import { Icon } from "@iconify/react";
-import { BotaneroIcon } from "./BotaneroIcon";
 import PhoneInput, { isValidPhoneNumber } from "react-phone-number-input";
 import es from "react-phone-number-input/locale/es";
 import { E164Number } from "libphonenumber-js/core";
@@ -171,11 +170,10 @@ function Login({ nextUrl }: { nextUrl?: string }) {
   const handleSubmit = page === 0 ? handlePhoneSubmit : handlePasswordSubmit;
 
   return (
-    <div className="relative flex h-screen w-full items-start overflow-x-auto overflow-y-auto transition-colors duration-200 p-4 justify-center">
+    <div className="relative flex-1 flex flex-col w-full items-start overflow-x-auto overflow-y-auto transition-colors duration-200 p-4 justify-center">
       <div className="flex flex-col h-full w-full items-center justify-center">
         <div className="flex flex-col items-center pb-6">
-          <BotaneroIcon size={80} />
-          <p className="-mt-6 text-xl font-medium">Bienvenido de nuevo</p>
+          <p className="text-xl font-medium">Bienvenido de nuevo</p>
           <p className="text-small text-default-500">
             Inicia sesión en tu cuenta
           </p>

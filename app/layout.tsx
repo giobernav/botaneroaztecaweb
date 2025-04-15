@@ -1,14 +1,15 @@
 import type { Metadata } from "next";
 import type { Viewport } from "next";
-import { Inter } from "next/font/google";
+import { Montserrat } from "next/font/google";
 import { Providers } from "./providers";
 import "@aws-amplify/ui-react/styles.css";
 import "react-phone-number-input/style.css";
 import "./app.css";
 
-const inter = Inter({ subsets: ["latin"] });
+const montserrat = Montserrat({ subsets: ["latin"] });
 import ConfigureAmplifyClientSide from "@/app/components/ConfigureAmplify";
 import TopNavbar from "./components/Navbar";
+import { Footer } from "./components/footer";
 
 export const metadata: Metadata = {
   title:
@@ -32,12 +33,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="es" className="dark">
-      <body className={inter.className}>
+    <html lang="es" suppressHydrationWarning>
+      <body className={montserrat.className}>
         <Providers>
           <ConfigureAmplifyClientSide />
-          <TopNavbar />
-          {children}
+
+          <div className="text-foreground bg-background">
+            <div className="min-h-screen flex flex-col">
+              <TopNavbar />
+              {children}
+            </div>
+          </div>
+          <Footer />
         </Providers>
       </body>
     </html>

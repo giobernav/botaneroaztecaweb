@@ -9,10 +9,12 @@ import {
   NavbarMenu,
   NavbarMenuItem,
 } from "@heroui/navbar";
+import { Icon } from "@iconify/react";
 import { Link } from "@heroui/link";
 import { Button } from "@heroui/button";
+import { Image } from "@heroui/image";
 import NextLink from "next/link";
-import { BotaneroIcon } from "./BotaneroIcon";
+import { ThemeSwitcher } from "./ThemeSwitcher";
 
 const menuItems = [
   "Inicio",
@@ -27,45 +29,55 @@ export default function TopNavbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
-    <Navbar shouldHideOnScroll onMenuOpenChange={setIsMenuOpen}>
+    <Navbar isBordered maxWidth="xl" onMenuOpenChange={setIsMenuOpen}>
       <NavbarContent>
         <NavbarMenuToggle
           aria-label={isMenuOpen ? "Close menu" : "Open menu"}
           className="sm:hidden"
         />
         <NavbarBrand>
-          <BotaneroIcon size={64} />
-          {/* <p className="font-bold text-inherit">ACME</p> */}
+          {/* <BotaneroIcon size={64} /> */}
+          <Image src="/logo botanero chpi.png" width={64} height={64} />
+          {/* <p className="font-bold text-inherit text-lg">BA</p> */}
         </NavbarBrand>
       </NavbarContent>
-
       <NavbarContent className="hidden sm:flex gap-4" justify="center">
         <NavbarItem>
-          <Link color="foreground" as={NextLink} href="/">
+          <Link color="foreground" as={NextLink} href="#about">
             Inicio
           </Link>
         </NavbarItem>
         <NavbarItem>
-          <Link color="foreground" as={NextLink} href="#">
-            Reservaciones
+          <Link color="foreground" as={NextLink} href="#menu">
+            Menú
           </Link>
         </NavbarItem>
-        <NavbarItem isActive>
-          <Link aria-current="page" as={NextLink} href="/loyalty">
+        <NavbarItem>
+          <Link color="foreground" as={NextLink} href="#specials">
+            Especiales
+          </Link>
+        </NavbarItem>
+        <NavbarItem>
+          <Link color="foreground" as={NextLink} href="#loyalty">
             Lealtad
           </Link>
         </NavbarItem>
       </NavbarContent>
       <NavbarContent justify="end">
-        <NavbarItem className="hidden lg:flex">
-          <Link as={NextLink} href="/login">
-            Iniciar sesión
-          </Link>
-        </NavbarItem>
         <NavbarItem>
-          <Button as={NextLink} color="primary" href="/login" variant="flat">
-            Regístrate
+          <Button
+            as={Link}
+            color="warning"
+            href="#reservation"
+            variant="flat"
+            size="sm"
+          >
+            <Icon icon="lucide:calendar" className="mr-1" />
+            Reservar
           </Button>
+        </NavbarItem>
+        <NavbarItem className="hidden sm:inline">
+          <ThemeSwitcher />
         </NavbarItem>
       </NavbarContent>
       <NavbarMenu>

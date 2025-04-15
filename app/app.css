@@ -18,6 +18,14 @@ main {
   align-items: stretch;
 } */
 
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: "Montserrat", sans-serif;
+}
+
 .cls1 {
   font-size: 156.6px;
   font-weight: 700;

@@ -3,8 +3,8 @@
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 
-import { Button } from "@heroui/button";
 import { Icon } from "@iconify/react";
+import { Switch } from "@heroui/switch";
 
 export function ThemeSwitcher() {
   const [mounted, setMounted] = useState(false);
@@ -17,17 +17,13 @@ export function ThemeSwitcher() {
   if (!mounted) return null;
 
   return (
-    <Button
-      isIconOnly
-      radius="full"
-      variant="light"
-      onPress={() => setTheme(theme === "dark" ? "light" : "dark")}
-    >
-      <Icon
-        className="text-default-500"
-        icon={theme === "dark" ? "solar:sun-linear" : "solar:moon-linear"}
-        width={24}
-      />
-    </Button>
+    <Switch
+      defaultSelected={theme !== "dark"}
+      color="warning"
+      onChange={() => setTheme(theme === "dark" ? "light" : "dark")}
+      endContent={<Icon icon="solar:sun-linear" width={20} />}
+      size="md"
+      startContent={<Icon icon="solar:moon-linear" width={20} />}
+    ></Switch>
   );
 }
