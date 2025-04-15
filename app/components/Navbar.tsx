@@ -17,7 +17,7 @@ import { BotaneroIcon } from "./BotaneroIcon";
 const menuItems = [
   "Inicio",
   "Reservaciones",
-  "Fidelidad",
+  "Lealtad",
   "Mi perfil",
   "Ayuda & Comentarios",
   "Cerrar sesión",
@@ -52,7 +52,7 @@ export default function TopNavbar() {
         </NavbarItem>
         <NavbarItem isActive>
           <Link aria-current="page" as={NextLink} href="/loyalty">
-            Fidelidad
+            Lealtad
           </Link>
         </NavbarItem>
       </NavbarContent>
