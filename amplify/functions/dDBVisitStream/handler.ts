@@ -1,7 +1,7 @@
 import type { DynamoDBStreamHandler } from "aws-lambda";
 import { Logger } from "@aws-lambda-powertools/logger";
 import { getAmplifyDataClientConfig } from "@aws-amplify/backend/function/runtime";
-import { env } from "$amplify/env/post-confirmation";
+import { env } from "$amplify/env/dDBVisitStreamFcn";
 import { Amplify } from "aws-amplify";
 import dayjs from "dayjs";
 import {
@@ -16,6 +16,7 @@ import {
   listCustomerRewards,
   updateMemberTier,
 } from "./helpers";
+import { mockSystem } from "../../../app/utils/system-data";
 
 const logger = new Logger({
   logLevel: "INFO",
@@ -59,10 +60,8 @@ export const handler: DynamoDBStreamHandler = async (event) => {
           dayjs().unix() > dayjs(retrievedCustomer?.tierEndDate).unix();
         // El periodo es: endTierDate - 1 año a la fecha actual
 
-        const company = await getCompany(
-          process.env.NEXT_PUBLIC_DEFAULT_COMPANY
-        );
-        const { tierLevels } = company!;
+        const company = await getCompany(env.DEFAULT_COMPANY);
+        const { tierLevels } = company || mockSystem;
 
         // Obtener los últimos CustomerReward recibibos en el periodo
         const customerRewards = await listCustomerRewards(

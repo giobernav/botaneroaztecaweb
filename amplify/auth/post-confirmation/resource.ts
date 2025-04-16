@@ -4,4 +4,7 @@ export const postConfirmationFcn = defineFunction({
   name: "post-confirmation",
   resourceGroupName: "auth",
   runtime: 20,
+  environment: {
+    DEFAULT_COMPANY: process.env?.NEXT_PUBLIC_DEFAULT_COMPANY || "",
+  },
 });

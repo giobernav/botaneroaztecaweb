@@ -12,7 +12,7 @@ interface ProfileHeaderProps {
   phone: string;
   avatarUrl: string;
   membershipLevel: string;
-  points: number;
+  points: string | number;
 }
 
 export function ProfileHeader({

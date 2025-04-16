@@ -1,6 +1,11 @@
-export const formatNumber = (amount: number) => {
+export const formatNumber = (
+  amount: number,
+  numberStyle:
+    | keyof Intl.NumberFormatOptionsStyleRegistry
+    | undefined = "currency"
+) => {
   return new Intl.NumberFormat("es-ES", {
-    style: "currency",
+    style: numberStyle,
     currency: "EUR",
   }).format(amount);
 };

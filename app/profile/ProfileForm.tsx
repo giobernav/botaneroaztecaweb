@@ -18,18 +18,24 @@ import {
 import { updateProfile } from "../actions/customer";
 import { Alert } from "@heroui/alert";
 
-const selectionSet = [
+export const customerSelectionSet = [
   "id",
   "phone",
   "name",
   "lastName",
   "email",
   "birthdate",
+  "tierEndDate",
+  "memberTier",
 ] as const;
+
 export default function ProfileForm({
   customer,
 }: {
-  customer: SelectionSet<Schema["Customer"]["type"], typeof selectionSet>;
+  customer: SelectionSet<
+    Schema["Customer"]["type"],
+    typeof customerSelectionSet
+  >;
 }) {
   const [state, setState] = useState<ProfileActionState>(
     profileFormInitialState
@@ -198,7 +204,7 @@ export default function ProfileForm({
               endContent={isSaved && <Icon icon="lucide:check" />}
               defaultValue={customer.birthdate!}
             >
-              {isSaved ? "Saved" : "Save Changes"}
+              {isSaved ? "Guardado" : "Guardar cambios"}
             </Button>
           </div>
         </Form>

@@ -9,16 +9,43 @@ import { Schema } from "@/amplify/data/resource";
 import { SelectionSet } from "aws-amplify/api";
 import { useMemo } from "react";
 import CompleteProfileComp from "@/app/loyalty/CompleteProfileComp";
+import { formatNumber } from "@/app/utils/formatter";
 
-const selectionSet = ["id", "phone", "name", "lastName"] as const;
+const selectionSet = [
+  "id",
+  "phone",
+  "name",
+  "lastName",
+  "email",
+  "birthdate",
+  "tierEndDate",
+  "memberTier",
+] as const;
+
+const visitSelectionSet = [
+  "id",
+  "status",
+  "customerId",
+  "datetime",
+  "pointsEarned",
+  "billAmount",
+  "createdAt",
+  "updatedAt",
+  "entryType",
+] as const;
+
 export default function LoyaltyLayoutComp({
   customer,
+  lastVisits,
   children,
 }: {
   customer: SelectionSet<
     Schema["Customer"]["type"],
     typeof selectionSet
   > | null;
+  lastVisits:
+    | SelectionSet<Schema["Visit"]["type"], typeof visitSelectionSet>[]
+    | null;
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
@@ -31,6 +58,12 @@ export default function LoyaltyLayoutComp({
       : "";
   }, [customer?.name, customer?.lastName]);
 
+  const totalPoints = useMemo(
+    () =>
+      lastVisits?.reduce((sum, visit) => sum + (visit?.pointsEarned || 0), 0),
+    [lastVisits]
+  );
+
   return (
     <div className="max-w-5xl mx-auto">
       <CompleteProfileComp />
@@ -39,8 +72,8 @@ export default function LoyaltyLayoutComp({
         name={customerName}
         phone={customer?.phone || ""}
         avatarUrl={"https://i.pravatar.cc/150?u=alex.johnson@example.com"}
-        membershipLevel={"Miembro bronce"}
-        points={450}
+        membershipLevel={`Nivel ${customer?.memberTier || "BRONZE"}`}
+        points={formatNumber(totalPoints || 0, "decimal")}
       />
 
       <Card className="overflow-visible">

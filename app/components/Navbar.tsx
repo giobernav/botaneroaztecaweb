@@ -106,7 +106,7 @@ function TopNavbar() {
           <NavbarMenuItem
             key={`${item.id}-${index}`}
             isActive={pathname === item.path}
-            hidden={!user && item.authRoute}
+            hidden={(!user && item.authRoute) || (user && item.id === "signIn")}
           >
             <Link
               isExternal={item.isExternal}

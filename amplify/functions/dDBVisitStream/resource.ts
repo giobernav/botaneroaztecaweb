@@ -6,4 +6,7 @@ export const dDBVisitStreamFcn = defineFunction({
   // optionally specify a path to your handler (defaults to "./handler.ts")
   entry: "./handler.ts",
   resourceGroupName: "data",
+  environment: {
+    DEFAULT_COMPANY: process.env?.NEXT_PUBLIC_DEFAULT_COMPANY || "",
+  },
 });

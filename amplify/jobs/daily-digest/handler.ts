@@ -4,7 +4,7 @@ import { type Schema } from "../../data/resource";
 import { Amplify } from "aws-amplify";
 import { generateClient } from "aws-amplify/data";
 import { getAmplifyDataClientConfig } from "@aws-amplify/backend/function/runtime";
-import { env } from "$amplify/env/post-confirmation";
+import { env } from "$amplify/env/daily-digest";
 import {
   customerSelectionSet,
   CustomerSS,
@@ -15,6 +15,7 @@ import {
   updateMemberTier,
 } from "./helpers";
 import dayjs from "dayjs";
+import { mockSystem } from "../../../app/utils/system-data";
 
 const { resourceConfig, libraryOptions } = await getAmplifyDataClientConfig(
   env
@@ -48,8 +49,8 @@ export const handler: EventBridgeHandler<
     // --- WELCOME (on post-confirmation)
     const rewards = await listRewards();
 
-    const company = await getCompany(process.env.NEXT_PUBLIC_DEFAULT_COMPANY);
-    const { tierLevels } = company!;
+    const company = await getCompany(env.DEFAULT_COMPANY);
+    const { tierLevels } = company || mockSystem;
 
     const sortedTierLevels = [...tierLevels!]
       .sort((a, b) => a?.pointsRequired! - b?.pointsRequired!)

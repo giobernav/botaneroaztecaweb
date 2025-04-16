@@ -7,6 +7,7 @@ import { getAmplifyDataClientConfig } from "@aws-amplify/backend/function/runtim
 import { env } from "$amplify/env/post-confirmation";
 import dayjs from "dayjs";
 import { customAlphabet } from "nanoid";
+import { mockSystem } from "../../../app/utils/system-data";
 
 const { resourceConfig, libraryOptions } = await getAmplifyDataClientConfig(
   env
@@ -22,14 +23,26 @@ export const handler: PostConfirmationTriggerHandler = async (event) => {
   const nanoid = customAlphabet("1234567890abcdefghijklmnopqrstvwxyz", 20);
 
   try {
+    const { data: company } = await client.models.Company.get({
+      id: env.DEFAULT_COMPANY,
+    });
+
+    const { pointExpirationDays, tierLevels } = company || mockSystem;
+
+    const sortedTierLevels = [...tierLevels!].sort(
+      (a, b) => a?.pointsRequired! - b?.pointsRequired!
+    );
     const customerRes = await client.models.Customer.create(
       {
         id: event.userName,
         phone: event.request.userAttributes.phone_number,
         secret: nanoid(),
         owner: event.request.userAttributes.sub,
-        memberTier: "BRONZE",
-        tierEndDate: dayjs().add(1, "year").endOf("day").toISOString(),
+        memberTier: sortedTierLevels[0]?.id || "BRONZE",
+        tierEndDate: dayjs()
+          .add(pointExpirationDays || 365, "days")
+          .endOf("day")
+          .toISOString(),
         status: "ACTIVE",
       },
       { selectionSet: ["id", "memberTier", "phone", "status"] }

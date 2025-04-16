@@ -123,36 +123,37 @@ export async function registerVisit(
   return { success: true };
 }
 
-export async function listVisits(customerId: string) {
-  const {
-    errors,
-    data: visits,
-    nextToken,
-  } = await cookiesClient.models.Visit.listVisitByCustomer(
-    {
-      customerId,
-      datetime: {
-        between: [
-          dayjs().subtract(90, "day").startOf("day").toISOString(),
-          dayjs().endOf("day").toISOString(),
-        ],
+export async function listVisits(customerId: string, endDate?: string | null) {
+  const between: [string, string] = [
+    endDate
+      ? dayjs(endDate).subtract(1, "year").startOf("day").toISOString()
+      : dayjs().subtract(1, "year").startOf("day").toISOString(),
+    dayjs().endOf("day").toISOString(),
+  ];
+
+  const { errors, data: visits } =
+    await cookiesClient.models.Visit.listVisitByCustomer(
+      {
+        customerId,
+        datetime: {
+          between,
+        },
       },
-    },
-    {
-      sortDirection: "DESC",
-      selectionSet: [
-        "id",
-        "status",
-        "customerId",
-        "datetime",
-        "pointsEarned",
-        "billAmount",
-        "createdAt",
-        "updatedAt",
-        "entryType",
-      ],
-    }
-  );
+      {
+        sortDirection: "DESC",
+        selectionSet: [
+          "id",
+          "status",
+          "customerId",
+          "datetime",
+          "pointsEarned",
+          "billAmount",
+          "createdAt",
+          "updatedAt",
+          "entryType",
+        ],
+      }
+    );
 
   if (errors) {
     console.log("visits errors", errors);

@@ -5,17 +5,22 @@ import { Schema } from "@/amplify/data/resource";
 import { SelectionSet } from "aws-amplify/api";
 import { diff } from "deep-object-diff";
 
-const selectionSet = [
+const customerSelectionSet = [
   "id",
   "phone",
   "name",
   "lastName",
   "email",
   "birthdate",
+  "tierEndDate",
+  "memberTier",
 ] as const;
 
 export async function updateProfile(
-  customer: SelectionSet<Schema["Customer"]["type"], typeof selectionSet>,
+  customer: SelectionSet<
+    Schema["Customer"]["type"],
+    typeof customerSelectionSet
+  >,
   formData: FormData
 ): Promise<ProfileActionState> {
   const form = Object.fromEntries(formData);
@@ -71,7 +76,7 @@ export async function getCustomer(userId: string) {
     },
     {
       authMode: "identityPool",
-      selectionSet,
+      selectionSet: customerSelectionSet,
     }
   );
 
