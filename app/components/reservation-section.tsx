@@ -45,6 +45,7 @@ export const ReservationSection = () => {
           <div className="flex gap-4">
             <Button
               as={Link}
+              isExternal
               color="warning"
               size="lg"
               startContent={<Icon icon="lucide:calendar" />}
@@ -54,6 +55,7 @@ export const ReservationSection = () => {
             </Button>
             <Button
               as={Link}
+              isExternal
               color="default"
               variant="bordered"
               size="lg"

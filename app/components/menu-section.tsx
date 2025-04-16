@@ -7,27 +7,27 @@ import { Icon } from "@iconify/react";
 const menuCategories = [
   {
     id: 1,
-    name: "Appetizers",
-    description: "Traditional Mexican botanas to start your meal",
+    name: "Entrantes",
+    description: "Botanas tradicionales mexicanas para empezar tu comida",
     image:
       "https://img.heroui.chat/image/food?w=400&h=300&u=mexican-appetizers",
   },
   {
     id: 2,
-    name: "Main Courses",
-    description: "Authentic dishes with bold flavors and spices",
+    name: "Principales",
+    description: "Platos auténticos con sabores y especias atrevidos",
     image: "https://img.heroui.chat/image/food?w=400&h=300&u=mexican-mains",
   },
   {
     id: 3,
-    name: "Desserts",
-    description: "Sweet treats inspired by Mexican traditions",
+    name: "Postres",
+    description: "Delicias dulces inspiradas en las tradiciones mexicanas",
     image: "https://img.heroui.chat/image/food?w=400&h=300&u=mexican-desserts",
   },
   {
     id: 4,
-    name: "Drinks",
-    description: "Refreshing beverages and traditional cocktails",
+    name: "Bebidas y combinados",
+    description: "Bebidas refrescantes y cócteles tradicionales.",
     image: "https://img.heroui.chat/image/food?w=400&h=300&u=mexican-drinks",
   },
 ];
@@ -36,9 +36,9 @@ export const MenuSection = () => {
   return (
     <section id="menu" className="py-16 px-4 max-w-6xl mx-auto">
       <div className="text-center mb-12">
-        <h2 className="text-3xl font-bold mb-2">Our Menu</h2>
+        <h2 className="text-3xl font-bold mb-2">Nuestra carta</h2>
         <p className="text-lg text-default-600">
-          Explore our wide variety of authentic Mexican dishes
+          Explora nuestra amplia variedad de auténticos platos mexicanos.
         </p>
       </div>
 
@@ -77,7 +77,7 @@ export const MenuSection = () => {
           size="lg"
           endContent={<Icon icon="lucide:arrow-right" />}
         >
-          View Full Menu
+          Ver la carta completa
         </Button>
       </div>
     </section>

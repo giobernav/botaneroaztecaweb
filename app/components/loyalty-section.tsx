@@ -6,23 +6,27 @@ import NextLink from "next/link";
 const loyaltyPerks = [
   {
     icon: "lucide:gift",
-    title: "Birthday Reward",
-    description: "Receive a complimentary dessert during your birthday month",
+    title: "Recompensa en tu cumpleaños",
+    description:
+      "Recibe un postre de cortesía durante el mes de tu cumpleaños y 1.000 puntos adicionales.",
   },
   {
     icon: "lucide:percent",
-    title: "Exclusive Discounts",
-    description: "Get special promotions and member-only offers",
+    title: "Descuentos exclusivos",
+    description:
+      "Obtenga promociones especiales y ofertas exclusivas para miembros. Del 5% al 15% de descuento en tus consumos.",
   },
   {
     icon: "lucide:star",
-    title: "Earn Points",
-    description: "Collect points with every purchase for future rewards",
+    title: "Gana puntos",
+    description:
+      "Acumula puntos con cada compra para obtener recompensas futuras.",
   },
   {
     icon: "lucide:bell",
-    title: "Early Access",
-    description: "Be the first to know about new menu items and events",
+    title: "Acceso anticipado",
+    description:
+      "Sea el primero en enterarse de los nuevos productos del menú y eventos.",
   },
 ];
 

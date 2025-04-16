@@ -1,5 +1,6 @@
 "use client";
 import { Divider } from "@heroui/divider";
+import { Link } from "@heroui/link";
 import { Icon } from "@iconify/react";
 
 export const Footer = () => {
@@ -22,9 +23,9 @@ export const Footer = () => {
               audaces.
             </p>
             <div className="flex items-start gap-4">
-              <a
+              <Link
                 href="https://www.instagram.com/botaneroazteca"
-                target="_blank"
+                isExternal
                 className="text-default-400 hover:text-amber-500 transition-colors"
               >
                 <Icon
@@ -32,7 +33,7 @@ export const Footer = () => {
                   icon="lucide:instagram"
                   width={24}
                 />
-              </a>
+              </Link>
             </div>
           </div>
 

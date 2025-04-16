@@ -14,7 +14,7 @@ const specialDishes = [
   },
   {
     id: 2,
-    name: "Enchiladas Verdes",
+    name: "Nachos especiales",
     description:
       "Three corn tortillas filled with chicken, topped with tomatillo sauce and queso fresco",
     price: "$18.99",
@@ -24,7 +24,7 @@ const specialDishes = [
   },
   {
     id: 3,
-    name: "Cochinita Pibil",
+    name: "Quesabirria",
     description:
       "Slow-roasted pork marinated in achiote and citrus, served with pickled red onions",
     price: "$19.99",
@@ -38,9 +38,9 @@ export const SpecialsSection = () => {
     <section id="specials" className="py-16 px-4 bg-amber-50 dark:bg-amber-700">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold mb-2">Chef's Specials</h2>
+          <h2 className="text-3xl font-bold mb-2">Nuestros especiales</h2>
           <p className="text-lg text-default-600">
-            Our most popular and unique dishes
+            Nuestros platos más populares y únicos.
           </p>
         </div>
 
@@ -73,7 +73,7 @@ export const SpecialsSection = () => {
 
         <div className="flex justify-center mt-8">
           <div className="flex items-center gap-3 text-amber-600 cursor-pointer hover:text-amber-700 transition-colors">
-            <span className="font-medium">View Today's Specials</span>
+            <span className="font-medium">Ver todos los especiales</span>
             <Icon icon="lucide:arrow-right" width={20} />
           </div>
         </div>

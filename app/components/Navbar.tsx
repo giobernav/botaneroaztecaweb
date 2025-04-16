@@ -13,20 +13,34 @@ import { Icon } from "@iconify/react";
 import { Link } from "@heroui/link";
 import { Button } from "@heroui/button";
 import { Image } from "@heroui/image";
-import NextLink from "next/link";
 import { ThemeSwitcher } from "./ThemeSwitcher";
+import { usePathname } from "next/navigation";
+import { useHash } from "../hooks/useHash";
+import { useAuthenticator } from "@aws-amplify/ui-react";
+import { useRouter } from "next/navigation";
 
 const menuItems = [
-  "Inicio",
-  "Reservaciones",
-  "Lealtad",
-  "Mi perfil",
-  "Ayuda & Comentarios",
-  "Cerrar sesión",
+  { id: "home", label: "Inicio", path: "/" },
+  {
+    id: "reservation",
+    label: "Hacer una reserva",
+    path: "https://bit.ly/reservasbotanero",
+    isExternal: true,
+  },
+  { id: "loyalty", label: "Programa de lealtad", path: "/loyalty" },
+  { id: "profile", label: "Mi perfil", path: "/profile", authRoute: true },
+  // {id: "help", label: "Ayuda & Comentarios", path: "/help"},
+  { id: "signIn", label: "Iniciar sesión / Registrarse", path: "/login" },
+  { id: "logout", label: "Cerrar sesión", path: "#", authRoute: true },
 ];
 
-export default function TopNavbar() {
+function TopNavbar() {
+  const router = useRouter();
+  const pathname = usePathname();
+  const hash = useHash();
+
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { user, signOut } = useAuthenticator((context) => [context.user]);
 
   return (
     <Navbar isBordered maxWidth="xl" onMenuOpenChange={setIsMenuOpen}>
@@ -36,29 +50,35 @@ export default function TopNavbar() {
           className="sm:hidden"
         />
         <NavbarBrand>
-          {/* <BotaneroIcon size={64} /> */}
-          <Image src="/logo botanero chpi.png" width={64} height={64} />
-          {/* <p className="font-bold text-inherit text-lg">BA</p> */}
+          <Link href="/">
+            {/* <BotaneroIcon size={64} /> */}
+            <Image src="/logo botanero chpi.png" width={64} height={64} />
+            {/* <p className="font-bold text-inherit text-lg">BA</p> */}
+          </Link>
         </NavbarBrand>
       </NavbarContent>
       <NavbarContent className="hidden sm:flex gap-4" justify="center">
-        <NavbarItem>
-          <Link color="foreground" as={NextLink} href="#about">
+        <NavbarItem isActive={pathname === "/" && (hash === "#about" || !hash)}>
+          <Link color="foreground" underline="active" href="/#about">
             Inicio
           </Link>
         </NavbarItem>
-        <NavbarItem>
-          <Link color="foreground" as={NextLink} href="#menu">
+        <NavbarItem isActive={pathname === "/" && hash === "#menu"}>
+          <Link color="foreground" underline="active" href="/#menu">
             Menú
           </Link>
         </NavbarItem>
-        <NavbarItem>
-          <Link color="foreground" as={NextLink} href="#specials">
+        <NavbarItem isActive={pathname === "/" && hash === "#specials"}>
+          <Link color="foreground" underline="active" href="/#specials">
             Especiales
           </Link>
         </NavbarItem>
-        <NavbarItem>
-          <Link color="foreground" as={NextLink} href="#loyalty">
+        <NavbarItem
+          isActive={
+            (pathname === "/" && hash === "#loyalty") || pathname === "/loyalty"
+          }
+        >
+          <Link color="foreground" underline="active" href="/#loyalty">
             Lealtad
           </Link>
         </NavbarItem>
@@ -67,8 +87,9 @@ export default function TopNavbar() {
         <NavbarItem>
           <Button
             as={Link}
+            showAnchorIcon
             color="warning"
-            href="#reservation"
+            href="https://bit.ly/reservasbotanero"
             variant="flat"
             size="sm"
           >
@@ -82,21 +103,30 @@ export default function TopNavbar() {
       </NavbarContent>
       <NavbarMenu>
         {menuItems.map((item, index) => (
-          <NavbarMenuItem key={`${item}-${index}`}>
+          <NavbarMenuItem
+            key={`${item.id}-${index}`}
+            isActive={pathname === item.path}
+            hidden={!user && item.authRoute}
+          >
             <Link
-              as={NextLink}
+              isExternal={item.isExternal}
+              showAnchorIcon={item.isExternal}
               className="w-full"
-              color={
-                index === 2
-                  ? "primary"
-                  : index === menuItems.length - 1
-                  ? "danger"
-                  : "foreground"
-              }
-              href="#"
+              color={pathname === item.path ? "primary" : "foreground"}
+              href={item.path}
               size="lg"
+              onPress={
+                item.id === "logout"
+                  ? async () => {
+                      if (signOut) {
+                        signOut();
+                        router.push("/login");
+                      }
+                    }
+                  : undefined
+              }
             >
-              {item}
+              {item.label}
             </Link>
           </NavbarMenuItem>
         ))}
@@ -104,3 +134,5 @@ export default function TopNavbar() {
     </Navbar>
   );
 }
+
+export default TopNavbar;

@@ -35,9 +35,8 @@ export default function RootLayout({
   return (
     <html lang="es" suppressHydrationWarning>
       <body className={montserrat.className}>
+        <ConfigureAmplifyClientSide />
         <Providers>
-          <ConfigureAmplifyClientSide />
-
           <div className="text-foreground bg-background">
             <div className="min-h-screen flex flex-col">
               <TopNavbar />
