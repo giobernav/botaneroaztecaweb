@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  serverComponentsPackages: ["@aws-crypto"],
+  serverExternalPackages: ["@aws-crypto"],
 };
 
 module.exports = nextConfig;
