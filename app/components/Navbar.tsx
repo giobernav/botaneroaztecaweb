@@ -18,6 +18,7 @@ import { usePathname } from "next/navigation";
 import { useHash } from "../hooks/useHash";
 import { useAuthenticator } from "@aws-amplify/ui-react";
 import { useRouter } from "next/navigation";
+import NextLink from "next/link";
 
 const menuItems = [
   { id: "home", label: "Inicio", path: "/" },
@@ -108,26 +109,38 @@ function TopNavbar() {
             isActive={pathname === item.path}
             hidden={(!user && item.authRoute) || (user && item.id === "signIn")}
           >
-            <Link
-              isExternal={item.isExternal}
-              showAnchorIcon={item.isExternal}
-              className="w-full"
-              color={pathname === item.path ? "primary" : "foreground"}
-              href={item.path}
-              size="lg"
-              onPress={
-                item.id === "logout"
-                  ? async () => {
-                      if (signOut) {
-                        signOut();
-                        router.push("/login");
+            {item.isExternal ? (
+              <Link
+                isExternal
+                showAnchorIcon
+                className="w-full"
+                color="foreground"
+                href={item.path}
+                size="lg"
+              >
+                {item.label}
+              </Link>
+            ) : (
+              <Link
+                as={NextLink}
+                className="w-full"
+                color={pathname === item.path ? "primary" : "foreground"}
+                href={item.path}
+                size="lg"
+                onPress={
+                  item.id === "logout"
+                    ? async () => {
+                        if (signOut) {
+                          signOut();
+                          router.push("/login");
+                        }
                       }
-                    }
-                  : undefined
-              }
-            >
-              {item.label}
-            </Link>
+                    : undefined
+                }
+              >
+                {item.label}
+              </Link>
+            )}
           </NavbarMenuItem>
         ))}
       </NavbarMenu>

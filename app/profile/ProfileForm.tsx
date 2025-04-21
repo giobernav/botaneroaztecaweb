@@ -8,7 +8,7 @@ import { DateInput } from "@heroui/date-input";
 import { Avatar } from "@heroui/avatar";
 import { Divider } from "@heroui/divider";
 import { Icon } from "@iconify/react";
-import { ChangeEvent, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { Schema } from "@/amplify/data/resource";
 import { SelectionSet } from "aws-amplify/api";
 import {
@@ -17,6 +17,7 @@ import {
 } from "@/app/profile/schema";
 import { updateProfile } from "../actions/customer";
 import { Alert } from "@heroui/alert";
+import { getUrl, uploadData } from "aws-amplify/storage";
 
 export const customerSelectionSet = [
   "id",
@@ -27,6 +28,7 @@ export const customerSelectionSet = [
   "birthdate",
   "tierEndDate",
   "memberTier",
+  "profilePicture",
 ] as const;
 
 export default function ProfileForm({
@@ -40,10 +42,23 @@ export default function ProfileForm({
   const [state, setState] = useState<ProfileActionState>(
     profileFormInitialState
   );
+  const [file, setFile] = useState<File | undefined | null>();
   const [profilePicture, setProfilePicture] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const fetch = async () => {
+      // Retrieve the signed URL:
+      const signedURL = await getUrl({ path: customer.profilePicture! });
+      setProfilePicture(signedURL?.url.toString());
+    };
+
+    if (customer.profilePicture) {
+      fetch();
+    }
+  }, [customer.profilePicture]);
 
   // Handle profile picture upload
   const handleProfilePictureUpload = (e: ChangeEvent<HTMLInputElement>) => {
@@ -55,6 +70,7 @@ export default function ProfileForm({
         }
       };
       reader.readAsDataURL(e.target.files[0]);
+      setFile(e.target.files[0]);
     }
   };
 
@@ -70,9 +86,18 @@ export default function ProfileForm({
     event.preventDefault();
     setIsLoading(true);
 
+    let pictureResult;
+    if (file) {
+      // Upload the Storage file:
+      pictureResult = await uploadData({
+        path: `profile-pictures/${customer.id}/${file.name}`,
+        data: file,
+      }).result;
+    }
+
     const formData = new FormData(event.currentTarget as HTMLFormElement);
 
-    const result = await updateProfile(customer, formData);
+    const result = await updateProfile(customer, formData, pictureResult?.path);
     console.log("result", result);
     setState(result);
     setIsLoading(false);

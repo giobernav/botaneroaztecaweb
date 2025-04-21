@@ -13,6 +13,7 @@ export const customerSelectionSet = [
   "email",
   "memberTier",
   "tierEndDate",
+  "profilePicture",
 ] as const;
 
 const rewardSelectionSet = [

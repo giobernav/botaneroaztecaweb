@@ -14,6 +14,7 @@ const customerSelectionSet = [
   "birthdate",
   "tierEndDate",
   "memberTier",
+  "profilePicture",
 ] as const;
 
 export async function updateProfile(
@@ -21,7 +22,8 @@ export async function updateProfile(
     Schema["Customer"]["type"],
     typeof customerSelectionSet
   >,
-  formData: FormData
+  formData: FormData,
+  profilePicturePath?: string
 ): Promise<ProfileActionState> {
   const form = Object.fromEntries(formData);
   console.log("form", form);
@@ -58,6 +60,8 @@ export async function updateProfile(
 
   const { data, errors } = await cookiesClient.models.Customer.update({
     id: customer.id,
+    profilePicture: profilePicturePath || customer.profilePicture,
+    ...updatedData,
   });
   console.log("updated profile data", data);
 

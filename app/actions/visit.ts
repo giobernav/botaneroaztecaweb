@@ -160,5 +160,10 @@ export async function listVisits(customerId: string, endDate?: string | null) {
     return { success: false, errors: errors.map((x) => x.message) };
   }
 
-  return { success: true, visits };
+  const totalPoints = visits?.reduce(
+    (sum, visit) => sum + (visit?.pointsEarned || 0),
+    0
+  );
+
+  return { success: true, visits, totalPoints };
 }

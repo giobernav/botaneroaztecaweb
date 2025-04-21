@@ -4,8 +4,9 @@ import React from "react";
 import { Avatar } from "@heroui/avatar";
 import { Badge } from "@heroui/badge";
 import { Button } from "@heroui/button";
-import { Icon } from "@iconify/react";
 import NextLink from "next/link";
+import { Icon } from "@iconify/react";
+import parsePhoneNumber from "libphonenumber-js";
 
 interface ProfileHeaderProps {
   name: string;
@@ -28,12 +29,14 @@ export function ProfileHeader({
         src={avatarUrl}
         className="w-20 h-20"
         isBordered
-        color="primary"
+        color="default"
       />
 
       <div className="flex flex-col items-center md:items-start gap-1 flex-grow">
         <h2 className="text-xl font-bold">{name || "Bienvenid@ de nuevo"}</h2>
-        <p className="text-default-500">{phone}</p>
+        <p className="text-default-500">
+          {parsePhoneNumber(phone)?.formatInternational()}
+        </p>
         <div className="flex items-center gap-2 mt-1">
           <Badge color="primary" variant="flat">
             {membershipLevel}

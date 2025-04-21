@@ -1,7 +1,12 @@
 import { z } from "zod";
 
 export const profileFormSchema = z.object({
-  email: z.string().email("Ingresa un email válido").optional(),
+  email: z
+    .string()
+    .email("Ingresa un email válido")
+    .nullish()
+    .catch(null)
+    .optional(),
   name: z.string().min(3, "Al menos 3 caracteres necesarios").optional(),
   lastName: z.string().min(3, "Al menos 3 caracteres necesarios").optional(),
   birthdate: z.string().date().nullish().catch(null),

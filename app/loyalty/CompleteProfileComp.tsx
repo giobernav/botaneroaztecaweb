@@ -1,33 +1,62 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Progress } from "@heroui/progress";
-import VerticalSteps from "./VerticalSteps";
+import { Schema } from "@/amplify/data/resource";
+import { SelectionSet } from "aws-amplify/api";
+import { FetchUserAttributesOutput } from "aws-amplify/auth";
+import { Button } from "@heroui/button";
+import NextLink from "next/link";
 
-const steps = [
-  {
-    title: "Agrega tu nombre",
-    description: "Ingresa tu nombre completo.",
-  },
-  {
-    title: "Ingresa y confirma tu email",
-    description: "Tu dirección de correo electrónico personal.",
-  },
-  {
-    title: "Añade tu cumpleaños",
-    description: "Regalos y descuentos en tu cumpleaños.",
-  },
-];
+const customerSelectionSet = [
+  "id",
+  "phone",
+  "name",
+  "lastName",
+  "email",
+  "birthdate",
+  "tierEndDate",
+  "memberTier",
+  "profilePicture",
+] as const;
 
-export default function CompleteProfileComp() {
-  const [currentStep, setCurrentStep] = useState(2);
+export default function CompleteProfileComp({
+  customer,
+}: {
+  customer: SelectionSet<
+    Schema["Customer"]["type"],
+    typeof customerSelectionSet
+  > | null;
+  userAttributes?: FetchUserAttributesOutput;
+}) {
+  const [profileProgress, setProfileProgress] = useState({
+    emailCompleted: false,
+    nameCompleted: false,
+    birthdate: false,
+  });
 
-  return (
-    <section className="max-w-sm mb-6">
+  useEffect(() => {
+    if (customer) {
+      setProfileProgress({
+        emailCompleted: !!customer.email,
+        nameCompleted: !!(customer.name && customer.lastName),
+        birthdate: !!customer.birthdate,
+      });
+    }
+  }, [customer]);
+
+  const profileCompleted = useMemo(
+    () => Object.values(profileProgress).reduce((sum, val) => sum && val, true),
+    [profileProgress]
+  );
+
+  return profileCompleted ? null : (
+    <section className="max-w-sm mb-6 bg-warning-50 p-4 rounded-lg">
       <h1 className="mb-2 text-xl font-medium" id="getting-started">
         Completa tu perfil
       </h1>
       <p className="mb-5 text-small text-default-500">
-        Completa la información de tu perfil y obtén 1.000 puntos de fidelidad.
+        Completa la informacón de tu perfil y obtén 1.000 puntos de lealtad
+        adicionales.
       </p>
       <Progress
         classNames={{
@@ -35,21 +64,26 @@ export default function CompleteProfileComp() {
           label: "text-small",
           value: "text-small text-default-400",
         }}
-        label="Steps"
-        maxValue={steps.length - 1}
+        maxValue={3}
         minValue={0}
-        showValueLabel={true}
         size="md"
-        value={currentStep}
-        valueLabel={`${currentStep + 1} of ${steps.length}`}
+        color="warning"
+        aria-label="Progreso del perfil"
+        value={Object.values(profileProgress).reduce(
+          (sum, val) => sum + (val ? 1 : 0),
+          0
+        )}
       />
-      <VerticalSteps
-        hideProgressBars
-        currentStep={currentStep}
-        stepClassName="border border-default-200 dark:border-default-50 aria-[current]:bg-default-100 dark:aria-[current]:bg-default-50"
-        steps={steps}
-        onStepChange={setCurrentStep}
-      />
+      <Button
+        as={NextLink}
+        color="warning"
+        variant="shadow"
+        radius="md"
+        href="/profile"
+        fullWidth
+      >
+        Completar perfil
+      </Button>
     </section>
   );
 }

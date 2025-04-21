@@ -10,7 +10,7 @@ export default async function LoyaltyLayout({
 }) {
   const user = await AuthGetCurrentUserServer();
   const customer = await getCustomer(user?.userId!);
-  const { visits: lastVisits } = await listVisits(
+  const { totalPoints } = await listVisits(
     user?.userId!,
     customer?.tierEndDate
   );
@@ -18,7 +18,7 @@ export default async function LoyaltyLayout({
   return (
     <main className="text-foreground bg-background">
       <div className="min-h-screen p-4 md:p-8">
-        <LoyaltyLayoutComp customer={customer} lastVisits={lastVisits!}>
+        <LoyaltyLayoutComp customer={customer} totalPoints={totalPoints || 0}>
           {children}
         </LoyaltyLayoutComp>
       </div>

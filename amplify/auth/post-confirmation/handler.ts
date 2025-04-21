@@ -49,36 +49,64 @@ export const handler: PostConfirmationTriggerHandler = async (event) => {
     );
     console.log("customerRes", customerRes.data, customerRes.errors);
 
-    // Find Reward
-    const { data: retrievedRewards } =
-      await client.models.Reward.listRewardByCategory({
-        category: "WELCOME",
-      });
-    console.log("retrievedRewards", retrievedRewards);
+    if (customerRes.errors) {
+      throw new Error("User already exists");
+    }
 
-    if (retrievedRewards.length) {
-      // Crear CustomerReward de recompensa del perfil
-      await client.models.CustomerReward.create({
-        customerId: event.userName,
-        rewardId: retrievedRewards[0].id,
-        expiryDate: dayjs().add(1, "year").endOf("day").toISOString(),
-        status: "ACTIVE",
-        type: retrievedRewards[0].type,
-        category: retrievedRewards[0].category,
-      });
-      // Crear Visit con entryType = "TRIGGER" para asignar los puntos ganados por completar el perfil
-      await client.models.Visit.create({
-        datetime: dayjs().toISOString(),
-        billAmount: null,
-        pointsEarned: 1000,
-        table: null,
-        status: "ACTIVE",
-        customerId: event.userName,
-        entryType: "TRIGGER",
-      });
+    const { data: retrievedCusRew } =
+      await client.models.CustomerReward.listCusRewByCustomer(
+        {
+          customerId: event.userName,
+          typeCategory: {
+            type: "ONCE",
+            category: "WELCOME",
+          } as Schema["CustomerReward"]["secondaryIndexes"]["listCusRewByCustomer"]["input"]["typeCategory"],
+        },
+        {
+          selectionSet: [
+            "id",
+            "customerId",
+            "rewardId",
+            "status",
+            "expiryDate",
+            "category",
+            "type",
+          ],
+        }
+      );
+
+    if (retrievedCusRew.length) {
+      // Find Reward
+      const { data: retrievedRewards } =
+        await client.models.Reward.listRewardByCategory({
+          category: "WELCOME",
+        });
+      console.log("retrievedRewards", retrievedRewards);
+
+      if (retrievedRewards.length) {
+        // Crear CustomerReward de recompensa del perfil
+        await client.models.CustomerReward.create({
+          customerId: event.userName,
+          rewardId: retrievedRewards[0].id,
+          expiryDate: dayjs().add(1, "year").endOf("day").toISOString(),
+          status: "ACTIVE",
+          type: retrievedRewards[0].type,
+          category: retrievedRewards[0].category,
+        });
+        // Crear Visit con entryType = "TRIGGER" para asignar los puntos ganados por completar el perfil
+        await client.models.Visit.create({
+          datetime: dayjs().toISOString(),
+          billAmount: null,
+          pointsEarned: 1000,
+          table: null,
+          status: "ACTIVE",
+          customerId: event.userName,
+          entryType: "TRIGGER",
+        });
+      }
     }
   } catch (err) {
-    console.log("Error creating customer profile");
+    console.log("Error procesing customer profile");
     console.log("err", err);
   }
 

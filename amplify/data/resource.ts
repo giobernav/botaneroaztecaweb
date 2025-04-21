@@ -50,7 +50,10 @@ const schema = a
       .secondaryIndexes((index) => [
         index("category").queryField("listRewardByCategory"),
       ])
-      .authorization((allow) => [allow.authenticated("identityPool")]),
+      .authorization((allow) => [
+        allow.guest(),
+        allow.authenticated("identityPool"),
+      ]),
     Visit: a
       .model({
         datetime: a.datetime().required(),
@@ -123,7 +126,10 @@ const schema = a
         logo: a.string(),
         pointExpirationDays: a.integer().default(365),
       })
-      .authorization((allow) => [allow.authenticated("identityPool")]),
+      .authorization((allow) => [
+        allow.guest(),
+        allow.authenticated("identityPool"),
+      ]),
   })
   .authorization((allow) => [
     allow.resource(postConfirmationFcn),

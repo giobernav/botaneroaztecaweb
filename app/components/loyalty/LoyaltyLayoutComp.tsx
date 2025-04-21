@@ -7,11 +7,17 @@ import { usePathname } from "next/navigation";
 import { ProfileHeader } from "./ProfileHeader";
 import { Schema } from "@/amplify/data/resource";
 import { SelectionSet } from "aws-amplify/api";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import CompleteProfileComp from "@/app/loyalty/CompleteProfileComp";
 import { formatNumber } from "@/app/utils/formatter";
+import { useAuthenticator } from "@aws-amplify/ui-react";
+import {
+  fetchUserAttributes,
+  FetchUserAttributesOutput,
+} from "aws-amplify/auth";
+import { getUrl } from "aws-amplify/storage";
 
-const selectionSet = [
+const customerSelectionSet = [
   "id",
   "phone",
   "name",
@@ -20,58 +26,69 @@ const selectionSet = [
   "birthdate",
   "tierEndDate",
   "memberTier",
-] as const;
-
-const visitSelectionSet = [
-  "id",
-  "status",
-  "customerId",
-  "datetime",
-  "pointsEarned",
-  "billAmount",
-  "createdAt",
-  "updatedAt",
-  "entryType",
+  "profilePicture",
 ] as const;
 
 export default function LoyaltyLayoutComp({
   customer,
-  lastVisits,
+  totalPoints,
   children,
 }: {
   customer: SelectionSet<
     Schema["Customer"]["type"],
-    typeof selectionSet
+    typeof customerSelectionSet
   > | null;
-  lastVisits:
-    | SelectionSet<Schema["Visit"]["type"], typeof visitSelectionSet>[]
-    | null;
+  // lastVisits:
+  //   | SelectionSet<Schema["Visit"]["type"], typeof visitSelectionSet>[]
+  //   | null;
+  totalPoints: number;
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const { user } = useAuthenticator((context) => [context.user]);
+  const [attrs, setAttrs] = useState<FetchUserAttributesOutput | undefined>();
+  const [signedUrl, setSignedUrl] = useState<URL | string | undefined>();
 
   const customerName = useMemo(() => {
     return customer?.name || customer?.lastName
-      ? `${customer.name || ""}${customer.name ? " " : ""}${
+      ? `Hola ${customer.name || ""}${customer.name ? " " : ""}${
           customer.lastName || ""
         }`
       : "";
   }, [customer?.name, customer?.lastName]);
 
-  const totalPoints = useMemo(
-    () =>
-      lastVisits?.reduce((sum, visit) => sum + (visit?.pointsEarned || 0), 0),
-    [lastVisits]
-  );
+  useEffect(() => {
+    const fetch = async () => {
+      const userAttrs = await fetchUserAttributes();
+      setAttrs(userAttrs);
+    };
+    if (user?.userId) {
+      fetch();
+    } else {
+      setAttrs(undefined);
+    }
+  }, [user?.userId]);
+
+  useEffect(() => {
+    const fetch = async () => {
+      // Retrieve the file's signed URL:
+      const signedURL = await getUrl({ path: customer?.profilePicture! });
+      setSignedUrl(signedURL.url);
+    };
+
+    if (customer?.profilePicture) {
+      fetch();
+    }
+  }, [customer?.profilePicture]);
 
   return (
     <div className="max-w-5xl mx-auto">
-      <CompleteProfileComp />
+      <CompleteProfileComp customer={customer} userAttributes={attrs} />
 
       <ProfileHeader
         name={customerName}
         phone={customer?.phone || ""}
-        avatarUrl={"https://i.pravatar.cc/150?u=alex.johnson@example.com"}
+        avatarUrl={signedUrl?.toString() || "/logo botanero chpi.png"}
         membershipLevel={`Nivel ${customer?.memberTier || "BRONZE"}`}
         points={formatNumber(totalPoints || 0, "decimal")}
       />
