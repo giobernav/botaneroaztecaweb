@@ -75,7 +75,7 @@ export const handler: PostConfirmationTriggerHandler = async (event) => {
         }
       );
 
-    if (retrievedCusRew.length) {
+    if (!retrievedCusRew.length) {
       // Find Reward
       const { data: retrievedRewards } =
         await client.models.Reward.listRewardByCategory({
