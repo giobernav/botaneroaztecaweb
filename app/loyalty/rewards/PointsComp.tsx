@@ -19,7 +19,7 @@ const PointsComp = ({
       </div>
       <Progress
         value={userPoints}
-        maxValue={nextTierPoints}
+        maxValue={nextTierPoints + (userPoints || 0)}
         color="primary"
         className="mb-2"
         showValueLabel={true}
@@ -27,12 +27,8 @@ const PointsComp = ({
       />
       <p className="text-sm text-default-500">
         {hasNextTier
-          ? `Gana ${
-              nextTierPoints - (userPoints || 0)
-            } puntos más para subir de nivel`
-          : `Gana ${
-              nextTierPoints - (userPoints || 0)
-            } puntos para mantener tu nivel`}
+          ? `Gana ${nextTierPoints} puntos más para subir de nivel`
+          : `Gana ${nextTierPoints} puntos para mantener tu nivel`}
       </p>
     </div>
   );

@@ -96,7 +96,7 @@ export const handler: DynamoDBStreamHandler = async (event) => {
               customerId,
               rewardId: retrievedRewards[0].id,
               expiryDate: dayjs().add(1, "year").endOf("day").toISOString(),
-              status: "ACTIVE",
+              status: "REDEEMED",
               type: retrievedRewards[0].type,
               category: retrievedRewards[0].category,
             });

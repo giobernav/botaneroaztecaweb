@@ -134,27 +134,36 @@ const RewardsComp = ({
                     <div className="flex justify-between items-start">
                       <h4 className="font-semibold">{reward.reward.title}</h4>
                       <Badge color="success" variant="flat">
-                        Available
+                        {reward.status}
                       </Badge>
                     </div>
                     <p className="text-sm text-default-500 mt-1">
                       {reward.reward.description}
                     </p>
                     <p className="text-xs text-default-400 mt-2">
-                      Expires: {reward.expiryDate}
+                      Expira: {dayjs(reward.expiryDate).format("DD-MMM-YYYY")}
                     </p>
                   </div>
                 </CardBody>
                 <CardFooter className="justify-between">
                   <div className="flex items-center">
-                    <Icon icon="lucide:star" className="text-warning mr-1" />
-                    <span className="text-sm">
-                      {reward.reward.pointsRequired} points
-                    </span>
+                    {reward.reward.pointsRequired ? (
+                      <>
+                        <Icon
+                          icon="lucide:star"
+                          className="text-warning mr-1"
+                        />
+                        <span className="text-sm">
+                          {reward.reward.pointsRequired} puntos
+                        </span>
+                      </>
+                    ) : null}
                   </div>
-                  <Button size="sm" color="primary">
-                    Redeem
-                  </Button>
+                  {reward.category === "COUPON" ? (
+                    <Button size="sm" color="primary">
+                      Canjear
+                    </Button>
+                  ) : null}
                 </CardFooter>
               </Card>
             ))}
@@ -200,7 +209,7 @@ const RewardsComp = ({
                     <div className="flex justify-between items-start">
                       <h4 className="font-semibold">{reward.title}</h4>
                       <Badge color="default" variant="flat">
-                        Locked
+                        Bloqueada
                       </Badge>
                     </div>
                     <p className="text-sm text-default-500 mt-1">
@@ -212,12 +221,12 @@ const RewardsComp = ({
                   <div className="flex items-center">
                     <Icon icon="lucide:star" className="text-warning mr-1" />
                     <span className="text-sm">
-                      {reward.pointsRequired || 0} points
+                      {reward.pointsRequired || 0} puntos
                     </span>
                   </div>
                   <Button size="sm" color="default" isDisabled>
-                    Need {(reward?.pointsRequired || 0) - (userPoints || 0)}{" "}
-                    more
+                    Necesitas{" "}
+                    {(reward?.pointsRequired || 0) - (userPoints || 0)} más
                   </Button>
                 </CardFooter>
               </Card>
