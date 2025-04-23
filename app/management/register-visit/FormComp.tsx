@@ -29,13 +29,13 @@ export default function FormComp() {
   const [isQRMode, setIsQRMode] = useState(false);
   const [pending, setPending] = useState(false);
   const [customerId, setCustomerId] = useState<string | undefined>();
-  const [token, setToken] = useState<string | undefined>();
+  // const [token, setToken] = useState<string | undefined>();
   const [state, setState] = useState<VisitActionState>(visitFormInitialState);
 
   const formAction = useCallback(
     () =>
-      registerVisit.bind(null, isQRMode ? "QR" : "MANUAL", customerId, token),
-    [isQRMode, customerId, token]
+      registerVisit.bind(null, isQRMode ? "QR" : "MANUAL", customerId, null),
+    [isQRMode, customerId]
   );
 
   const onScan = async (scan: any) => {
@@ -47,19 +47,19 @@ export default function FormComp() {
       const mode = scannedURL.searchParams.get("mode");
 
       if (scannedURL.hostname === "botaneroazteca.es" && mode === "qr") {
-        const token = scannedURL.searchParams.get("token");
+        // const token = scannedURL.searchParams.get("token");
         const customerId = scannedURL.searchParams.get("cusid");
 
-        console.log("token", token);
+        // console.log("token", token);
         console.log("customerId", customerId);
 
-        if (customerId && token) {
+        if (customerId) {
           // SET customerId & token state
           setCustomerId(customerId);
-          setToken(token);
+          // setToken(token);
         } else {
           setCustomerId(undefined);
-          setToken(undefined);
+          // setToken(undefined);
           setState({
             success: false,
             errors: ["Token no válido, escanea el código nuevamente"],
@@ -81,7 +81,7 @@ export default function FormComp() {
 
     if (!result.success && isQRMode) {
       setCustomerId(undefined);
-      setToken(undefined);
+      // setToken(undefined);
       setIsActive(true);
     }
 

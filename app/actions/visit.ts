@@ -8,7 +8,7 @@ import {
   VisitActionState,
   visitFormSchema,
 } from "../management/register-visit/schema";
-import { verifyToken } from "./totp";
+// import { verifyToken } from "./totp";
 
 export async function registerVisit(
   entryType: "QR" | "MANUAL",
@@ -47,18 +47,18 @@ export async function registerVisit(
     };
   }
 
-  if (entryType === "QR") {
-    // verificar token
-    const isValidToken = await verifyToken(customerId!, token!);
-    console.log("isValidToken", isValidToken);
+  // if (entryType === "QR") {
+  //   // verificar token
+  //   const isValidToken = await verifyToken(customerId!, token!);
+  //   console.log("isValidToken", isValidToken);
 
-    if (!isValidToken) {
-      return {
-        success: false,
-        errors: ["Token no válido, escanea el código nuevamente"],
-      };
-    }
-  }
+  //   if (!isValidToken) {
+  //     return {
+  //       success: false,
+  //       errors: ["Token no válido, escanea el código nuevamente"],
+  //     };
+  //   }
+  // }
 
   if (!customerId) {
     const customerPhone = validationResult.data.customerPhone?.replace(
