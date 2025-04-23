@@ -10,26 +10,25 @@ const menuCategories = [
     id: 1,
     name: "Entrantes",
     description: "Botanas tradicionales mexicanas para empezar tu comida",
-    image:
-      "https://img.heroui.chat/image/food?w=400&h=300&u=mexican-appetizers",
+    image: "/menu/nachos.jpg",
   },
   {
     id: 2,
     name: "Principales",
     description: "Platos auténticos con sabores y especias atrevidos",
-    image: "https://img.heroui.chat/image/food?w=400&h=300&u=mexican-mains",
+    image: "/menu/azteca.jpg",
   },
   {
     id: 3,
     name: "Postres",
     description: "Delicias dulces inspiradas en las tradiciones mexicanas",
-    image: "https://img.heroui.chat/image/food?w=400&h=300&u=mexican-desserts",
+    image: "/menu/tresleches.jpg",
   },
   {
     id: 4,
     name: "Bebidas y combinados",
     description: "Bebidas refrescantes y cócteles tradicionales.",
-    image: "https://img.heroui.chat/image/food?w=400&h=300&u=mexican-drinks",
+    image: "/menu/margarita.jpeg",
   },
 ];
 

@@ -9,28 +9,27 @@ const specialDishes = [
     id: 1,
     name: "Molcajete Azteca",
     description:
-      "Grilled steak, chicken, shrimp, and chorizo served in a hot stone bowl with cactus and cheese",
-    price: "$24.99",
-    image: "https://img.heroui.chat/image/food?w=300&h=300&u=mexican-molcajete",
+      "Delicioso guacamole fresco servido en un auténtico molcajete. Acompañado de queso fresco mexicano, totopos y tortillas.",
+    price: "12 €",
+    image: "/menu/molcajete.jpg",
     specialTag: "Chef's Special",
   },
   {
     id: 2,
     name: "Nachos especiales",
     description:
-      "Three corn tortillas filled with chicken, topped with tomatillo sauce and queso fresco",
-    price: "$18.99",
-    image:
-      "https://img.heroui.chat/image/food?w=300&h=300&u=mexican-enchiladas",
+      "Totopos crujientes cubiertos con queso fundido, frijoles, guacamole, pico de gallo vibrante y carne de ternera desmechada.",
+    price: "14 €",
+    image: "/menu/nachos.jpg",
     specialTag: "Popular",
   },
   {
     id: 3,
     name: "Quesabirria",
     description:
-      "Slow-roasted pork marinated in achiote and citrus, served with pickled red onions",
-    price: "$19.99",
-    image: "https://img.heroui.chat/image/food?w=300&h=300&u=mexican-cochinita",
+      "Tres tortillas de maíz fritas rellenas de birria de res acompañadas del jugo de la carne, cebolla y cilantro.",
+    price: "$14 €",
+    image: "/menu/quesabirria.jpg",
     specialTag: "Traditional",
   },
 ];
