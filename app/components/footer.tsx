@@ -40,18 +40,30 @@ export const Footer = () => {
           <div>
             <h3 className="text-lg font-bold mb-4">Contacto</h3>
             <div className="space-y-3 text-default-400">
-              <div className="flex items-center gap-2">
+              <Link
+                className="flex items-center gap-2 text-default-400"
+                isExternal
+                href="https://www.google.com/maps/search/?api=1&query=Botanero+Azteca+Valdebebas"
+              >
                 <Icon icon="lucide:map-pin" width={18} />
                 <p>Josefina Aldecoa 8. Madrid, 28055</p>
-              </div>
-              <div className="flex items-center gap-2">
+              </Link>
+              <Link
+                className="flex items-center gap-2 text-default-400"
+                isExternal
+                href="https://wa.me/34671451403"
+              >
                 <Icon icon="lucide:phone" width={18} />
                 <p>(+34) 671 45 14 03</p>
-              </div>
-              <div className="flex items-center gap-2">
+              </Link>
+              <Link
+                className="flex items-center gap-2 text-default-400"
+                isExternal
+                href="mailto:contacto@botaneroazteca.es"
+              >
                 <Icon icon="lucide:mail" width={18} />
                 <p>contacto@botaneroazteca.es</p>
-              </div>
+              </Link>
             </div>
           </div>
 
@@ -81,13 +93,13 @@ export const Footer = () => {
             <h3 className="text-lg font-bold mb-4">Enlaces</h3>
             <ul className="space-y-2 text-default-400">
               <li>
-                <a href="#" className="hover:text-amber-500 transition-colors">
+                <a href="/#" className="hover:text-amber-500 transition-colors">
                   Nosotros
                 </a>
               </li>
               <li>
                 <a
-                  href="#menu"
+                  href="/#menu"
                   className="hover:text-amber-500 transition-colors"
                 >
                   Menú
@@ -95,7 +107,7 @@ export const Footer = () => {
               </li>
               <li>
                 <a
-                  href="#reservation"
+                  href="/#reservation"
                   className="hover:text-amber-500 transition-colors"
                 >
                   Reservas
@@ -103,7 +115,7 @@ export const Footer = () => {
               </li>
               <li>
                 <a
-                  href="#loyalty"
+                  href="/loyalty"
                   className="hover:text-amber-500 transition-colors"
                 >
                   Programa de lealtad

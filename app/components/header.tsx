@@ -14,8 +14,7 @@ export const Header = () => {
       <div className="text-center text-white px-4 max-w-3xl">
         <h1 className="text-4xl md:text-6xl font-bold mb-4">Botanero Azteca</h1>
         <p className="text-xl md:text-2xl mb-8">
-          Experimente la auténtica cocina mexicana. El auténtico mexicano de
-          Valdebebas, Madrid.
+          El auténtico mexicano de Valdebebas, Madrid.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Button

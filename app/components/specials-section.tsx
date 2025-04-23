@@ -1,5 +1,7 @@
 import React from "react";
-import { Card, CardBody, Image } from "@heroui/react";
+import { Card, CardBody } from "@heroui/card";
+import { Image } from "@heroui/image";
+import { Link } from "@heroui/link";
 import { Icon } from "@iconify/react";
 
 const specialDishes = [
@@ -72,10 +74,13 @@ export const SpecialsSection = () => {
         </div>
 
         <div className="flex justify-center mt-8">
-          <div className="flex items-center gap-3 text-amber-600 cursor-pointer hover:text-amber-700 transition-colors">
+          <Link
+            className="flex items-center gap-3 text-amber-600 cursor-pointer hover:text-amber-700 transition-colors"
+            href="https://botaneroazteca.last.shop/en/botanero-azteca"
+          >
             <span className="font-medium">Ver todos los especiales</span>
             <Icon icon="lucide:arrow-right" width={20} />
-          </div>
+          </Link>
         </div>
       </div>
     </section>

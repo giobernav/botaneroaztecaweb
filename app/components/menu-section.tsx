@@ -3,6 +3,7 @@ import { Card, CardBody, CardFooter } from "@heroui/card";
 import { Button } from "@heroui/button";
 import { Image } from "@heroui/image";
 import { Icon } from "@iconify/react";
+import { Link } from "@heroui/link";
 
 const menuCategories = [
   {
@@ -62,17 +63,14 @@ export const MenuSection = () => {
               <h3 className="text-xl font-bold">{category.name}</h3>
               <p className="text-default-600">{category.description}</p>
             </CardBody>
-            {/* <CardFooter className="justify-between">
-              <Button color="warning" variant="flat">
-                View Items
-              </Button>
-            </CardFooter> */}
           </Card>
         ))}
       </div>
 
       <div className="mt-12 text-center">
         <Button
+          as={Link}
+          href="https://botaneroazteca.last.shop/en/botanero-azteca"
           color="warning"
           size="lg"
           endContent={<Icon icon="lucide:arrow-right" />}

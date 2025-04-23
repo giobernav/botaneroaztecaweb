@@ -110,15 +110,15 @@ export default function LoyaltyLayoutComp({
             />
             <Tab
               as={NextLink}
-              key="/loyalty/last-visits"
-              title="Últimas visitas"
-              href="/loyalty/last-visits"
+              key="/loyalty/rewards"
+              title="Recompensas"
+              href="/loyalty/rewards"
             />
             <Tab
               as={NextLink}
-              key="/loyalty/rewards"
-              title="Recompensas y cupones"
-              href="/loyalty/rewards"
+              key="/loyalty/last-visits"
+              title="Historial"
+              href="/loyalty/last-visits"
             />
           </Tabs>
 
