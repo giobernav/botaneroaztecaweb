@@ -63,12 +63,14 @@ export const handler: DynamoDBStreamHandler = async (event) => {
           }
         );
 
-        const isProfileComplete =
+        const isProfileComplete = Boolean(
           retrievedCustomer?.name &&
-          retrievedCustomer.lastName &&
-          retrievedCustomer.email &&
-          retrievedCustomer.phone &&
-          retrievedCustomer.birthdate;
+            retrievedCustomer.lastName &&
+            retrievedCustomer.email &&
+            retrievedCustomer.phone &&
+            retrievedCustomer.birthdate
+        );
+        console.log("isProfileComplete", isProfileComplete);
 
         // Verificar que no se haya entregado esa recompensa
         const { data: retrievedCusRew } =
@@ -93,12 +95,15 @@ export const handler: DynamoDBStreamHandler = async (event) => {
             }
           );
 
-        if (isProfileComplete && !retrievedCusRew) {
+        console.log("retrievedCusRew", retrievedCusRew);
+
+        if (isProfileComplete && !retrievedCusRew.length) {
           // Find Reward
           const { data: retrievedRewards } =
             await client.models.Reward.listRewardByCategory({
               category: "PROFILE",
             });
+          console.log("retrievedRewards", retrievedRewards);
 
           if (retrievedRewards.length) {
             // Crear CustomerReward de recompensa del perfil
