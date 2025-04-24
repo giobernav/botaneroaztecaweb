@@ -58,9 +58,11 @@ export const handler: PostConfirmationTriggerHandler = async (event) => {
         {
           customerId: event.userName,
           typeCategory: {
-            type: "ONCE",
-            category: "WELCOME",
-          } as Schema["CustomerReward"]["secondaryIndexes"]["listCusRewByCustomer"]["input"]["typeCategory"],
+            eq: {
+              type: "ONCE",
+              category: "WELCOME",
+            },
+          },
         },
         {
           selectionSet: [

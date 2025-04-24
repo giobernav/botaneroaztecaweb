@@ -18,6 +18,7 @@ import {
 import { updateProfile } from "../actions/customer";
 import { Alert } from "@heroui/alert";
 import { getUrl, uploadData } from "aws-amplify/storage";
+import { parseDate } from "@internationalized/date";
 
 export const customerSelectionSet = [
   "id",
@@ -195,7 +196,13 @@ export default function ProfileForm({
               defaultValue={customer.email!}
             />
 
-            <DateInput name="birthdate" label="Cumpleaños" />
+            <DateInput
+              name="birthdate"
+              label="Cumpleaños"
+              defaultValue={
+                customer.birthdate ? parseDate(customer.birthdate) : null
+              }
+            />
           </div>
 
           {state?.errors?.map((message: string, idx) => {
@@ -227,7 +234,6 @@ export default function ProfileForm({
                 !isLoading && !isSaved && <Icon icon="lucide:save" />
               }
               endContent={isSaved && <Icon icon="lucide:check" />}
-              defaultValue={customer.birthdate!}
             >
               {isSaved ? "Guardado" : "Guardar cambios"}
             </Button>

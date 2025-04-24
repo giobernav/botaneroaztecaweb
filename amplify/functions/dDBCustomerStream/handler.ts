@@ -73,14 +73,16 @@ export const handler: DynamoDBStreamHandler = async (event) => {
         console.log("isProfileComplete", isProfileComplete);
 
         // Verificar que no se haya entregado esa recompensa
-        const { data: retrievedCusRew } =
+        const { data: retrievedCusRew, errors } =
           await client.models.CustomerReward.listCusRewByCustomer(
             {
-              customerId: customerId,
+              customerId,
               typeCategory: {
-                type: "ONCE",
-                category: "PROFILE",
-              } as Schema["CustomerReward"]["secondaryIndexes"]["listCusRewByCustomer"]["input"]["typeCategory"],
+                eq: {
+                  type: "ONCE",
+                  category: "PROFILE",
+                },
+              },
             },
             {
               selectionSet: [
@@ -95,7 +97,7 @@ export const handler: DynamoDBStreamHandler = async (event) => {
             }
           );
 
-        console.log("retrievedCusRew", retrievedCusRew);
+        console.log("retrievedCusRew", retrievedCusRew, errors);
 
         if (isProfileComplete && !retrievedCusRew.length) {
           // Find Reward
