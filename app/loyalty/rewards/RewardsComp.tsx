@@ -126,9 +126,15 @@ const RewardsComp = ({
               <Card key={reward.id} className="overflow-hidden">
                 <CardBody className="p-0">
                   <img
-                    src={reward.reward.image || "/reward.png"}
+                    src={
+                      reward.reward.image || reward.category === "WELCOME"
+                        ? "/welcome_reward.png"
+                        : reward.category === "PROFILLE"
+                        ? "/profile_reward.png"
+                        : "/reward.png"
+                    }
                     alt={reward.reward.title || undefined}
-                    className="w-full h-48 object-cover"
+                    className="w-full h-44 object-cover"
                   />
                   <div className="p-4">
                     <div className="flex justify-between items-start">
@@ -192,9 +198,15 @@ const RewardsComp = ({
                 <CardBody className="p-0">
                   <div className="relative">
                     <img
-                      src={reward.image || "/reward.png"}
+                      src={
+                        reward.image || reward.category === "WELCOME"
+                          ? "/welcome_reward.png"
+                          : reward.category === "PROFILLE"
+                          ? "/profile_reward.png"
+                          : "/reward.png"
+                      }
                       alt={reward.title || undefined}
-                      className="w-full h-48 object-cover filter grayscale"
+                      className="w-full h-44 object-cover filter grayscale"
                     />
                     <div className="absolute inset-0 flex items-center justify-center bg-black/30">
                       <Icon
