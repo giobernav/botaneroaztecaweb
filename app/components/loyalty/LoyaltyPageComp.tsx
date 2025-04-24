@@ -28,7 +28,7 @@ export default function LoyaltyPageComp({
           </CardBody>
         </Card>
 
-        <div className="mt-8 max-w-md mx-auto">
+        <div className="mt-8 max-w-md mx-auto px-2">
           <h4 className="text-md font-medium mb-2">¿Cómo usar tu código QR?</h4>
           <ol className="list-decimal pl-5 space-y-2 text-default-600">
             <li>Muestra tu código QR en el momento del pago</li>

@@ -163,6 +163,7 @@ function Login({ nextUrl }: { nextUrl?: string }) {
         setPending(false);
         paginate(0);
         console.log(`SignUp Complete`);
+        router.push(nextUrl || "/loyalty");
       }
     }
   };

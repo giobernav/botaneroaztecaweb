@@ -5,6 +5,7 @@ import { generateClient } from "aws-amplify/data";
 import { getAmplifyDataClientConfig } from "@aws-amplify/backend/function/runtime";
 import { env } from "$amplify/env/dDBCustomerStreamFcn";
 import { Amplify } from "aws-amplify";
+import { type NativeAttributeValue, unmarshall } from "@aws-sdk/util-dynamodb";
 import { type Schema } from "../../data/resource";
 
 const logger = new Logger({
@@ -31,11 +32,20 @@ export const handler: DynamoDBStreamHandler = async (event) => {
     }
 
     if (record.eventName === "MODIFY") {
-      // business logic to process new records
-      logger.info(`Old Image: ${JSON.stringify(record.dynamodb?.OldImage)}`);
-      logger.info(`New Image: ${JSON.stringify(record.dynamodb?.NewImage)}`);
+      const recordOldValues = unmarshall(
+        record.dynamodb?.OldImage as Record<string, NativeAttributeValue>,
+        { wrapNumbers: true }
+      );
+      const recordNewValues = unmarshall(
+        record.dynamodb?.NewImage as Record<string, NativeAttributeValue>,
+        { wrapNumbers: true }
+      );
 
-      const customerId = record.dynamodb?.NewImage?.id as string;
+      // business logic to process new records
+      logger.info(`Old Image: ${JSON.stringify(recordOldValues)}`);
+      logger.info(`New Image: ${JSON.stringify(recordNewValues)}`);
+
+      const customerId = recordNewValues?.id as string;
       if (customerId) {
         // Verificar si el usuario completó su perfil de usuario
         // name, lastName, birthday, email & phone

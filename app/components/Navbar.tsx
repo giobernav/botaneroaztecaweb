@@ -41,7 +41,7 @@ function TopNavbar() {
   const hash = useHash();
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { user, signOut } = useAuthenticator((context) => [context.user]);
+  const { user, signOut } = useAuthenticator();
 
   return (
     <Navbar isBordered maxWidth="xl" onMenuOpenChange={setIsMenuOpen}>

@@ -4,6 +4,7 @@ import { getAmplifyDataClientConfig } from "@aws-amplify/backend/function/runtim
 import { env } from "$amplify/env/dDBVisitStreamFcn";
 import { Amplify } from "aws-amplify";
 import dayjs from "dayjs";
+import { type NativeAttributeValue, unmarshall } from "@aws-sdk/util-dynamodb";
 import {
   createCustomerReward,
   formatNumber,
@@ -35,11 +36,15 @@ export const handler: DynamoDBStreamHandler = async (event) => {
     logger.info(`Event Type: ${record.eventName}`);
 
     if (record.eventName === "INSERT") {
+      const recordNewValues = unmarshall(
+        record.dynamodb?.NewImage as Record<string, NativeAttributeValue>,
+        { wrapNumbers: true }
+      );
       // business logic to process new records
-      logger.info(`New Image: ${JSON.stringify(record.dynamodb?.NewImage)}`);
+      logger.info(`New Image: ${JSON.stringify(recordNewValues)}`);
 
       // Al registrar una visita:
-      const newRecord = record.dynamodb?.NewImage;
+      const newRecord = recordNewValues;
       if (newRecord) {
         // Consultar Customer para checar la fecha de inicio del tier(nivel)
         const retrievedCustomer = await getCustomer(
