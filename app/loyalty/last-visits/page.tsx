@@ -20,7 +20,7 @@ export default async function LoyaltyLastVisitsPage() {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-semibold">Visitas recientes</h3>
-          <span className="text-sm text-default-500">Último año</span>
+          <span className="text-sm text-default-500">Últimos 180 días</span>
         </div>
 
         <LastVisitsComp visits={lastVisits!} />

@@ -1,9 +1,9 @@
 import React from "react";
-import { Card, CardBody, CardFooter } from "@heroui/card";
+import { Card, CardBody } from "@heroui/card";
 import { Button } from "@heroui/button";
 import { Image } from "@heroui/image";
 import { Icon } from "@iconify/react";
-import { Link } from "@heroui/link";
+import Link from "next/link";
 
 const menuCategories = [
   {

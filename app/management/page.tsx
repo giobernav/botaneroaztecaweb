@@ -10,10 +10,10 @@ export default function ManagementPage() {
       <div className="max-w-md mx-auto pt-12">
         <div className="rounded-xl shadow-lg bg-default-50 p-8 space-y-8">
           <div className="text-center space-y-3">
-            <h1 className="text-2xl font-semibold">Welcome Back!</h1>
+            <h1 className="text-2xl font-semibold">Programa de lealtad</h1>
             <p>
-              Choose an action below to either redeem your earned rewards or
-              register your current visit.
+              Elija una acción a continuación para canjear las recompensas
+              obtenidas o registrar una visita.
             </p>
           </div>
 
@@ -26,7 +26,7 @@ export default function ManagementPage() {
               className="w-full h-16 text-lg shadow-lg transform transition-all duration-200 hover:scale-[1.02]"
               startContent={<Icon icon="lucide:gift" className="text-xl" />}
             >
-              Redeem Reward
+              Canjear recompensa
             </Button>
 
             <div className="relative flex items-center">
@@ -46,12 +46,12 @@ export default function ManagementPage() {
                 <Icon icon="lucide:check-circle" className="text-xl" />
               }
             >
-              Register Visit
+              Registar visita
             </Button>
           </div>
 
           <div className="mt-6 text-center">
-            <p className="text-sm">Need help? Contact our support team</p>
+            <p className="text-sm">Agregar recompensa manual</p>
           </div>
         </div>
       </div>

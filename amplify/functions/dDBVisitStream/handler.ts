@@ -50,12 +50,14 @@ export const handler: DynamoDBStreamHandler = async (event) => {
         const retrievedCustomer = await getCustomer(
           newRecord.customerId as string
         );
+        console.log("retrievedCustomer", retrievedCustomer);
 
         // Consultar ultimas Visits del Customer desde el tierEndDate
         const lastVisits = await getLastVisits(
           newRecord.customerId as string,
           retrievedCustomer?.tierEndDate as string
         );
+        console.log("lastVisits", lastVisits);
 
         // Puntos acumulados desde el inicio del tier (en el periodo)
         const pointsEarned: number = getPointsEarned(lastVisits);
@@ -73,22 +75,25 @@ export const handler: DynamoDBStreamHandler = async (event) => {
           newRecord.customerId as string,
           retrievedCustomer?.tierEndDate as string
         );
+        console.log("customerRewards", customerRewards);
 
         const groupedCustomerRewards = groupBy(
           customerRewards,
           (rwd) => rwd.rewardId
         );
+        console.log("groupedCustomerRewards", groupedCustomerRewards);
 
         // Consultar Rewards disponibles
         const availableRewards = await listAvailableRewards();
         const sortedAvailableRewards = [...availableRewards]
           .sort((a, b) => a.pointsRequired! - b.pointsRequired!)
           .reverse();
+        console.log("sortedAvailableRewards", sortedAvailableRewards);
 
         for (const availableReward of sortedAvailableRewards) {
           const qty = +formatNumber(
             pointsEarned / (availableReward?.pointsRequired || 0) -
-              (groupedCustomerRewards?.[availableReward.id].length || 0)
+              (groupedCustomerRewards?.[availableReward.id]?.length || 0)
           );
 
           if (qty >= 1) {
