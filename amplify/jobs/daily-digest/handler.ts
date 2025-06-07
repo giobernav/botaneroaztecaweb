@@ -25,6 +25,30 @@ Amplify.configure(resourceConfig, libraryOptions);
 
 const client = generateClient<Schema>();
 
+const handleBirthdayReward = async (customer: CustomerSS, rewards: any[]) => {
+  if (customer.birthdate == dayjs().format("YYYY-MM-DD")) {
+    // create customer reward & visit to earn points
+    await client.models.CustomerReward.create({
+      customerId: customer.id,
+      rewardId: rewards[0].id,
+      expiryDate: dayjs().add(1, "year").endOf("day").toISOString(),
+      status: "ACTIVE",
+      type: rewards[0].type,
+      category: rewards[0].category,
+    });
+    // Crear Visit con entryType = "TRIGGER" para asignar los puntos ganados por cumpleaños
+    await client.models.Visit.create({
+      datetime: dayjs().toISOString(),
+      billAmount: null,
+      pointsEarned: 2000,
+      table: null,
+      status: "ACTIVE",
+      customerId: customer.id,
+      entryType: "TRIGGER",
+    });
+  }
+};
+
 export const handler: EventBridgeHandler<
   "Scheduled Event",
   null,
@@ -65,7 +89,6 @@ export const handler: EventBridgeHandler<
             selectionSet: customerSelectionSet,
           });
         customerNextToken = customersRest?.nextToken || null;
-        // customers = [...customers, ...customersRest.data];
 
         if (customersRest.data.length) {
           for (const customer of customersRest.data) {
@@ -96,27 +119,7 @@ export const handler: EventBridgeHandler<
               }
             }
 
-            if (customer.birthdate == dayjs().format("YYYY-MM-DD")) {
-              // create customer reward & visit to earn points
-              await client.models.CustomerReward.create({
-                customerId: customer.id,
-                rewardId: rewards[0].id,
-                expiryDate: dayjs().add(1, "year").endOf("day").toISOString(),
-                status: "ACTIVE",
-                type: rewards[0].type,
-                category: rewards[0].category,
-              });
-              // Crear Visit con entryType = "TRIGGER" para asignar los puntos ganados por cumpleaños
-              await client.models.Visit.create({
-                datetime: dayjs().toISOString(),
-                billAmount: null,
-                pointsEarned: 2000,
-                table: null,
-                status: "ACTIVE",
-                customerId: customer.id,
-                entryType: "TRIGGER",
-              });
-            }
+            await handleBirthdayReward(customer, rewards);
           }
         }
       } while (customerNextToken);

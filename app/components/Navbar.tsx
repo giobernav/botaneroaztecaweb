@@ -18,7 +18,7 @@ import { usePathname } from "next/navigation";
 import { useHash } from "../hooks/useHash";
 import { useAuthenticator } from "@aws-amplify/ui-react";
 import { useRouter } from "next/navigation";
-import NextLink from "next/link";
+import { set } from "zod";
 
 const menuItems = [
   { id: "home", label: "Inicio", path: "/" },
@@ -32,7 +32,7 @@ const menuItems = [
   { id: "profile", label: "Mi perfil", path: "/profile", authRoute: true },
   // {id: "help", label: "Ayuda & Comentarios", path: "/help"},
   { id: "signIn", label: "Iniciar sesión / Registrarse", path: "/login" },
-  { id: "logout", label: "Cerrar sesión", path: "#", authRoute: true },
+  { id: "logout", label: "Cerrar sesión", path: undefined, authRoute: true },
 ];
 
 function TopNavbar() {
@@ -44,7 +44,12 @@ function TopNavbar() {
   const { user, signOut } = useAuthenticator();
 
   return (
-    <Navbar isBordered maxWidth="xl" onMenuOpenChange={setIsMenuOpen}>
+    <Navbar
+      isBordered
+      maxWidth="xl"
+      isMenuOpen={isMenuOpen}
+      onMenuOpenChange={setIsMenuOpen}
+    >
       <NavbarContent>
         <NavbarMenuToggle
           aria-label={isMenuOpen ? "Close menu" : "Open menu"}
@@ -117,12 +122,14 @@ function TopNavbar() {
                 color="foreground"
                 href={item.path}
                 size="lg"
+                onPress={() => {
+                  setIsMenuOpen(false);
+                }}
               >
                 {item.label}
               </Link>
             ) : (
               <Link
-                as={NextLink}
                 className="w-full"
                 color={pathname === item.path ? "primary" : "foreground"}
                 href={item.path}
@@ -135,7 +142,10 @@ function TopNavbar() {
                           router.push("/login");
                         }
                       }
-                    : undefined
+                    : () => {
+                        console.log("Navigating to", item.path);
+                        setIsMenuOpen(false);
+                      }
                 }
               >
                 {item.label}

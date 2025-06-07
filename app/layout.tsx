@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import type { Viewport } from "next";
+import NextTopLoader from "nextjs-toploader";
 import { Montserrat } from "next/font/google";
 import { Providers } from "./providers";
 import "@aws-amplify/ui-react/styles.css";
@@ -36,6 +37,7 @@ export default function RootLayout({
     <html lang="es" suppressHydrationWarning>
       <body className={montserrat.className}>
         <ConfigureAmplifyClientSide />
+        <NextTopLoader color="#000" showAtBottom={true} shadow={false} />
         <Providers>
           <div className="text-foreground bg-background">
             <div className="min-h-screen flex flex-col">

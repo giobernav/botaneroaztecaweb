@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 
+import QRCode from "react-qr-code";
 import { Card, CardBody, CardFooter } from "@heroui/card";
 import { Button } from "@heroui/button";
 import { Badge } from "@heroui/badge";
@@ -44,6 +45,7 @@ const CustomerRewardsComp = ({ customerId }: { customerId?: string }) => {
   const [availableRewards, setAvailableRewards] =
     useState<CustomerRewardSS[]>();
 
+  const [rewardId, setRewardId] = useState<string>();
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   useEffect(() => {
@@ -128,7 +130,14 @@ const CustomerRewardsComp = ({ customerId }: { customerId?: string }) => {
                   ) : null}
                 </div>
                 {reward.category === "COUPON" ? (
-                  <Button size="sm" color="primary" onPress={onOpen}>
+                  <Button
+                    size="sm"
+                    color="primary"
+                    onPress={() => {
+                      onOpen();
+                      setRewardId(reward.id);
+                    }}
+                  >
                     Canjear
                   </Button>
                 ) : null}
@@ -138,31 +147,34 @@ const CustomerRewardsComp = ({ customerId }: { customerId?: string }) => {
         </div>
       )}
 
-      <Modal isOpen={isOpen} placement={"bottom"} onOpenChange={onOpenChange}>
+      <Modal
+        isOpen={isOpen}
+        placement={"bottom"}
+        onOpenChange={(isOpen: boolean) => {
+          onOpenChange();
+          !isOpen && setRewardId(undefined);
+        }}
+      >
         <ModalContent>
           {(onClose) => (
             <>
               <ModalHeader className="flex flex-col gap-1">
-                Modal Title
+                Canjear recompensa
               </ModalHeader>
               <ModalBody>
-                <p>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                  Nullam pulvinar risus non risus hendrerit venenatis.
-                  Pellentesque sit amet hendrerit risus, sed porttitor quam.
-                </p>
-                <p>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                  Nullam pulvinar risus non risus hendrerit venenatis.
-                  Pellentesque sit amet hendrerit risus, sed porttitor quam.
-                </p>
+                <div className="w-56 h-56 bg-white p-2 flex items-center justify-center">
+                  <QRCode
+                    size={256}
+                    style={{ height: "auto", maxWidth: "100%", width: "100%" }}
+                    value={`https://botaneroazteca.es/redeem?mode=qr&company=botaneroazteca&branch=valdebebas&rewid=${rewardId}`}
+                    viewBox={`0 0 256 256`}
+                    level="Q"
+                  />
+                </div>
               </ModalBody>
               <ModalFooter>
                 <Button color="danger" variant="light" onPress={onClose}>
-                  Close
-                </Button>
-                <Button color="primary" onPress={onClose}>
-                  Action
+                  Cerrar
                 </Button>
               </ModalFooter>
             </>

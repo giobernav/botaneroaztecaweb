@@ -70,7 +70,12 @@ const schema = a
           .sortKeys(["datetime"])
           .queryField("listVisitByCustomer"),
       ])
-      .authorization((allow) => [allow.authenticated("identityPool")]),
+      .authorization((allow) => [
+        allow.authenticated("identityPool").to(["read"]),
+        allow
+          .groups(["admin", "manager"])
+          .to(["create", "update", "delete", "read"]),
+      ]),
     CustomerReward: a
       .model({
         customerId: a.id().required(),

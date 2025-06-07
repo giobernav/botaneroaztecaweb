@@ -6,6 +6,18 @@ const client = generateClient<Schema>();
 
 const now = dayjs();
 
+const customerSelectionSet = [
+  "name",
+  "lastName",
+  "birthdate",
+  "status",
+  "email",
+  "phone",
+  "memberTier", // 5, 10, 15%
+  "tierEndDate", // from first visit or welcome
+  "profilePicture",
+] as const;
+
 const rewardSelectionSet = [
   "id",
   "pointsRequired",
@@ -47,6 +59,10 @@ type RewardSS = SelectionSet<
   Schema["Reward"]["type"],
   typeof rewardSelectionSet
 >;
+export type CustomerSS = SelectionSet<
+  Schema["Customer"]["type"],
+  typeof customerSelectionSet
+>;
 type CustomerRewardSS = SelectionSet<
   Schema["CustomerReward"]["type"],
   typeof customerRewardSelectionSet
@@ -64,17 +80,7 @@ export const getCustomer = async (customerId: string) => {
       id: customerId,
     },
     {
-      selectionSet: [
-        "name",
-        "lastName",
-        "birthdate",
-        "status",
-        "email",
-        "phone",
-        "memberTier", // 5, 10, 15%
-        "tierEndDate", // from first visit or welcome
-        "profilePicture",
-      ],
+      selectionSet: customerSelectionSet,
     }
   );
 
@@ -83,14 +89,19 @@ export const getCustomer = async (customerId: string) => {
 
 export const getLastVisits = async (
   customerId: string,
-  tierEndDate: string
+  tierEndDate?: string | null
 ) => {
   const { data } = await client.models.Visit.listVisitByCustomer(
     {
       customerId,
       datetime: {
         between: [
-          dayjs(tierEndDate).subtract(1, "year").startOf("day").toISOString(),
+          tierEndDate
+            ? dayjs(tierEndDate)
+                .subtract(1, "year")
+                .startOf("day")
+                .toISOString()
+            : now.subtract(180, "days").startOf("day").toISOString(),
           now.endOf("day").toISOString(),
         ],
       },
@@ -134,10 +145,7 @@ export const listAvailableRewards = async () => {
   return rwds;
 };
 
-export const listCustomerRewards = async (
-  customerId: string,
-  tierEndDate: string
-) => {
+export const listCustomerRewards = async (customerId: string) => {
   let cusRwdTkn: string | null = null;
   let cusRwds: CustomerRewardSS[] = [];
 
@@ -150,7 +158,7 @@ export const listCustomerRewards = async (
         customerId,
         createdAt: {
           between: [
-            dayjs(tierEndDate).subtract(1, "year").startOf("day").toISOString(),
+            now.subtract(180, "days").startOf("day").toISOString(),
             now.endOf("day").toISOString(),
           ],
         },
