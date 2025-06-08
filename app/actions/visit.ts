@@ -124,19 +124,23 @@ export async function registerVisit(
 }
 
 export async function listVisits(customerId: string, endDate?: string | null) {
-  const between: [string, string] = [
-    endDate
-      ? dayjs(endDate).subtract(1, "year").startOf("day").toISOString()
-      : dayjs().subtract(1, "year").startOf("day").toISOString(),
-    dayjs().endOf("day").toISOString(),
-  ];
-
   const { errors, data: visits } =
     await cookiesClient.models.Visit.listVisitByCustomer(
       {
         customerId,
         datetime: {
-          between,
+          between: endDate
+            ? [
+                dayjs(endDate)
+                  .subtract(366, "days")
+                  .startOf("day")
+                  .toISOString(),
+                dayjs(endDate).endOf("day").toISOString(),
+              ]
+            : [
+                dayjs().subtract(180, "days").startOf("day").toISOString(),
+                dayjs().endOf("day").toISOString(),
+              ],
         },
       },
       {
@@ -165,5 +169,5 @@ export async function listVisits(customerId: string, endDate?: string | null) {
     0
   );
 
-  return { success: true, visits, totalPoints };
+  return { success: true, visits: visits || [], totalPoints };
 }

@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Navbar,
   NavbarBrand,
@@ -18,7 +18,7 @@ import { usePathname } from "next/navigation";
 import { useHash } from "../hooks/useHash";
 import { useAuthenticator } from "@aws-amplify/ui-react";
 import { useRouter } from "next/navigation";
-import { set } from "zod";
+import { Hub } from "aws-amplify/utils";
 
 const menuItems = [
   { id: "home", label: "Inicio", path: "/" },
@@ -41,7 +41,47 @@ function TopNavbar() {
   const hash = useHash();
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { user, signOut } = useAuthenticator();
+  const { user, signOut } = useAuthenticator((context) => [context.user]);
+
+  const [isAuthenticated, setIsAuthenticated] = useState(!!user);
+
+  // Initialize the state based on the user object
+  useEffect(() => {
+    // Check if the user is authenticated on initial load
+    setIsAuthenticated(!!user);
+  }, [user]);
+
+  useEffect(() => {
+    // Close the menu when the pathname or hash changes
+    setIsMenuOpen(false);
+  }, [pathname, hash]);
+
+  useEffect(() => {
+    // Close the menu when the user logs out
+    if (!user) {
+      setIsMenuOpen(false);
+    }
+  }, [user]);
+
+  useEffect(() => {
+    // Listen for sign out events
+    const unsubscribe = Hub.listen("auth", (data) => {
+      const { event } = data.payload;
+      console.log("Auth data:", data);
+      if (event === "signedIn") {
+        setIsAuthenticated(true);
+      }
+      if (event === "signedOut") {
+        setIsAuthenticated(false);
+        setIsMenuOpen(false);
+        router.push("/login");
+      }
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, []);
 
   return (
     <Navbar
@@ -112,7 +152,10 @@ function TopNavbar() {
           <NavbarMenuItem
             key={`${item.id}-${index}`}
             isActive={pathname === item.path}
-            hidden={(!user && item.authRoute) || (user && item.id === "signIn")}
+            hidden={
+              (!isAuthenticated && item.authRoute) ||
+              (isAuthenticated && item.id === "signIn")
+            }
           >
             {item.isExternal ? (
               <Link
@@ -122,9 +165,6 @@ function TopNavbar() {
                 color="foreground"
                 href={item.path}
                 size="lg"
-                onPress={() => {
-                  setIsMenuOpen(false);
-                }}
               >
                 {item.label}
               </Link>
@@ -136,16 +176,12 @@ function TopNavbar() {
                 size="lg"
                 onPress={
                   item.id === "logout"
-                    ? async () => {
+                    ? () => {
                         if (signOut) {
                           signOut();
-                          router.push("/login");
                         }
                       }
-                    : () => {
-                        console.log("Navigating to", item.path);
-                        setIsMenuOpen(false);
-                      }
+                    : undefined
                 }
               >
                 {item.label}

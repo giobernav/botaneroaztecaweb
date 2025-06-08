@@ -95,15 +95,18 @@ export const getLastVisits = async (
     {
       customerId,
       datetime: {
-        between: [
-          tierEndDate
-            ? dayjs(tierEndDate)
-                .subtract(1, "year")
+        between: tierEndDate
+          ? [
+              dayjs(tierEndDate)
+                .subtract(366, "days")
                 .startOf("day")
-                .toISOString()
-            : now.subtract(180, "days").startOf("day").toISOString(),
-          now.endOf("day").toISOString(),
-        ],
+                .toISOString(),
+              dayjs(tierEndDate).endOf("day").toISOString(),
+            ]
+          : [
+              dayjs().subtract(180, "days").startOf("day").toISOString(),
+              dayjs().endOf("day").toISOString(),
+            ],
       },
     },
     {

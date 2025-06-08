@@ -7,13 +7,8 @@ import { Divider } from "@heroui/divider";
 
 export default async function LoyaltyLastVisitsPage() {
   const user = await AuthGetCurrentUserServer();
-  // visitas del cliente en los ultimos 90 días
-  const customer = await getCustomer(user?.userId!);
-  const { visits: lastVisits = [] } = await listVisits(
-    user?.userId!,
-    customer?.tierEndDate
-  );
-  console.log("lastVisits", lastVisits);
+  // visitas del cliente en los ultimos 180 días
+  const { visits: lastVisits = [] } = await listVisits(user?.userId!);
 
   return (
     <div className="p-4">

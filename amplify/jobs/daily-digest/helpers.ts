@@ -69,7 +69,7 @@ export const getLastVisits = async (
       customerId,
       datetime: {
         between: [
-          dayjs(tierEndDate).subtract(1, "year").startOf("day").toISOString(),
+          dayjs(tierEndDate).subtract(366, "days").startOf("day").toISOString(),
           now.endOf("day").toISOString(),
         ],
       },

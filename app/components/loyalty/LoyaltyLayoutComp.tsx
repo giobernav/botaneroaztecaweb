@@ -38,9 +38,6 @@ export default function LoyaltyLayoutComp({
     Schema["Customer"]["type"],
     typeof customerSelectionSet
   > | null;
-  // lastVisits:
-  //   | SelectionSet<Schema["Visit"]["type"], typeof visitSelectionSet>[]
-  //   | null;
   totalPoints: number;
   children: React.ReactNode;
 }) {

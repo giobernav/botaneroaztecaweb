@@ -37,7 +37,7 @@ export default function RootLayout({
     <html lang="es" suppressHydrationWarning>
       <body className={montserrat.className}>
         <ConfigureAmplifyClientSide />
-        <NextTopLoader color="#000" showAtBottom={true} shadow={false} />
+        <NextTopLoader color="#dc2" />
         <Providers>
           <div className="text-foreground bg-background">
             <div className="min-h-screen flex flex-col">

@@ -50,8 +50,8 @@ export const config = {
     "/loyalty",
     "/loyalty/(.*)",
     "/rewards/(.*)",
-    // "/management/(.*)",
-    // "/management",
+    "/management/(.*)",
+    "/management",
     // "/((?!api|_next/static|_next/image|favicon.ico|login).*)",
   ],
 };
