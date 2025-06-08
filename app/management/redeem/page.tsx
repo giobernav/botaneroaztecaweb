@@ -1,3 +1,5 @@
+import { RedeemRewardForm } from "./RedeemRewardForm";
+
 export default async function ManagementRedeemPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br p-4 flex items-center justify-center">
@@ -8,6 +10,7 @@ export default async function ManagementRedeemPage() {
         <p className="text-center text-gray-600">
           Escanea el código QR para canjear la recompensa.
         </p>
+        <RedeemRewardForm />
       </div>
     </div>
   );

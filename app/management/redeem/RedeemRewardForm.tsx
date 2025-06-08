@@ -1,43 +1,96 @@
 "use client";
 
+import { useState, useEffect, FormEvent, useCallback } from "react";
 import { Form } from "@heroui/form";
 import { Switch } from "@heroui/switch";
 import { Icon } from "@iconify/react";
 import { Input } from "@heroui/input";
 import { Button } from "@heroui/button";
-import { useState, FormEvent } from "react";
-import { Link } from "@heroui/link";
+import { Alert } from "@heroui/alert";
+import { Scanner } from "@yudiel/react-qr-scanner";
+import PhoneInput from "react-phone-number-input";
+import { useCountdown } from "usehooks-ts";
+import Link from "next/link";
+import { redirect, RedirectType } from "next/navigation";
 
-interface RedeemFormData {
-  isQRMode: boolean;
-  phoneNumber: string;
-  rewardId: string;
-}
+import es from "react-phone-number-input/locale/es";
+import { RedeemActionState, redeemFormInitialState } from "./schema";
+import { redeemReward } from "@/app/actions/redeem";
 
 export function RedeemRewardForm() {
-  const [isQRMode, setIsQRMode] = useState(false);
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [rewardId, setRewardId] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [count, { startCountdown }] = useCountdown({
+    countStart: 5,
+    intervalMs: 1000,
+  });
+  const [isActive, setIsActive] = useState(true);
+  const [isQRMode, setIsQRMode] = useState(true);
+  const [rewardId, setRewardId] = useState<string | undefined>();
+  const [pending, setPending] = useState(false);
+  const [state, setState] = useState<RedeemActionState>(redeemFormInitialState);
 
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
+  const formAction = useCallback(
+    () => redeemReward.bind(null, isQRMode ? "QR" : "MANUAL", rewardId),
+    [isQRMode, rewardId]
+  );
 
-    const formData: RedeemFormData = {
-      isQRMode,
-      phoneNumber: !isQRMode ? phoneNumber : "",
-      rewardId,
-    };
+  const onScan = async (scan: any) => {
+    console.log("scan result", scan);
+    setIsActive(false);
 
-    console.log("Redeem form submitted:", formData);
+    if (scan?.[0]?.rawValue) {
+      const scannedURL = new URL(scan?.[0]?.rawValue);
+      console.log("scannedURL", scannedURL);
+      const mode = scannedURL.searchParams.get("mode");
 
-    // Simulate API call
-    setTimeout(() => {
-      setIsSubmitting(false);
-      // Reset form or show success message
-    }, 1500);
+      if (scannedURL.hostname === "botaneroazteca.es" && mode === "qr") {
+        // const token = scannedURL.searchParams.get("token");
+        const rewardId = scannedURL.searchParams.get("rewid");
+
+        // console.log("token", token);
+        console.log("rewardId", rewardId);
+
+        if (rewardId) {
+          // SET customerId & token state
+          setRewardId(rewardId);
+          // setToken(token);
+        } else {
+          setRewardId(undefined);
+          // setToken(undefined);
+          setState({
+            success: false,
+            errors: ["Token no válido, escanea el código nuevamente"],
+          });
+          setIsActive(true);
+        }
+      }
+    }
   };
+
+  const handleSubmit = async (_event: FormEvent<HTMLFormElement>) => {
+    _event.preventDefault();
+    setPending(true);
+    const formData = new FormData(_event.currentTarget as HTMLFormElement);
+    const result = await formAction()(formData);
+    console.log("result", result);
+    setState(result);
+    setPending(false);
+
+    if (!result.success && isQRMode) {
+      setRewardId(undefined);
+      // setToken(undefined);
+      setIsActive(true);
+    }
+
+    if (result.success) {
+      startCountdown();
+    }
+  };
+
+  useEffect(() => {
+    if (count == 0) {
+      redirect("/management", RedirectType.push);
+    }
+  }, [count]);
 
   return (
     <Form className="space-y-4" onSubmit={handleSubmit}>
@@ -50,64 +103,76 @@ export function RedeemRewardForm() {
           startContent={<Icon icon="lucide:qr-code" className="text-xl" />}
           endContent={<Icon icon="lucide:keyboard" className="text-xl" />}
         >
-          {isQRMode ? "Scan Code" : "Manual Entry"}
+          {isQRMode ? "Escanear QR" : "Entrada manual"}
         </Switch>
       </div>
 
       {isQRMode ? (
         <div className="space-y-4 w-full">
-          <div className="h-48 bg-gray-100 rounded-lg flex flex-col items-center justify-center w-full">
-            <Icon icon="lucide:scan" className="w-12 h-12 text-gray-400 mb-2" />
-            <p className="text-gray-500 text-sm text-center px-4">
-              Position the QR code within the scanner area to automatically
-              redeem the reward
-            </p>
+          <div className="w-64 h-64 mx-auto">
+            <Scanner
+              onScan={onScan}
+              onError={(error: any) => {
+                console.log(`onError: ${error}`);
+              }}
+              paused={!isActive}
+            />
           </div>
         </div>
       ) : (
         <div className="space-y-4 w-full">
-          <Input
-            label="Phone Number"
-            placeholder="Enter customer phone number"
-            value={phoneNumber}
-            onValueChange={setPhoneNumber}
-            startContent={<Icon icon="lucide:phone" />}
+          <PhoneInput
+            labels={es}
+            international
+            countryCallingCodeEditable={false}
+            defaultCountry="ES"
+            inputComponent={Input}
+            onChange={(value) => {
+              console.log("phone", value);
+            }}
+            name="customerPhone"
             type="tel"
-            pattern="[0-9]*"
-            isRequired
-            fullWidth
+            label="Número de celular"
+            placeholder="Ingresa tu número de celular"
+            defaultValue={state?.form?.customerPhone}
+            className="w-full"
           />
 
           <Input
-            label="Reward ID"
+            label="ID de la recompensa"
+            name="rewardId"
             placeholder="Enter reward identification code"
-            value={rewardId}
-            onValueChange={setRewardId}
             startContent={<Icon icon="lucide:gift" />}
             isRequired
             fullWidth
+            defaultValue={state?.form?.rewardId}
           />
         </div>
       )}
+
+      {state.success ? (
+        <Alert
+          color="success"
+          title={`Recompensa canjeada exitosamente!`}
+          description={`Serás redireccionado en ${count} segundos`}
+        />
+      ) : null}
 
       <Button
         type="submit"
         color="primary"
         className="w-full"
-        startContent={<Icon icon="lucide:check" />}
-        isLoading={isSubmitting}
-        isDisabled={
-          isSubmitting ||
-          (!isQRMode && (phoneNumber.trim() === "" || rewardId.trim() === ""))
-        }
+        startContent={!pending && <Icon icon="lucide:check" />}
+        disabled={pending}
+        isLoading={pending}
       >
-        {isSubmitting ? "Procesando..." : "Redimir Recompensa"}
+        {pending ? "Procesando..." : "Registrar recompensa"}
       </Button>
 
       <div className="flex justify-center">
         <Button
           as={Link}
-          href="/"
+          href="/management"
           color="default"
           variant="light"
           startContent={<Icon icon="lucide:arrow-left" />}

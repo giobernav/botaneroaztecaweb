@@ -20,7 +20,7 @@ export default function ManagementPage() {
           <div className="space-y-4">
             <Button
               as={Link}
-              href="/management/redeem-reward"
+              href="/management/redeem"
               color="primary"
               size="lg"
               className="w-full h-16 text-lg shadow-lg transform transition-all duration-200 hover:scale-[1.02]"
@@ -50,9 +50,9 @@ export default function ManagementPage() {
             </Button>
           </div>
 
-          <div className="mt-6 text-center">
+          {/* <div className="mt-6 text-center">
             <p className="text-sm">Agregar recompensa manual</p>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

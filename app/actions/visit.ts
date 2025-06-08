@@ -13,7 +13,7 @@ import {
 export async function registerVisit(
   entryType: "QR" | "MANUAL",
   userId: string | undefined | null,
-  token: string | undefined | null,
+  _token: string | undefined | null,
   formData: FormData
 ): Promise<VisitActionState> {
   let customerId = userId;
