@@ -12,7 +12,7 @@ const PointsComp = ({
   nextTierPoints: number;
 }) => {
   return (
-    <div className="bg-content1 py-4 rounded-lg">
+    <div className="bg-content1 py-4 rounded-lg w-full">
       <div className="flex justify-between items-center mb-2">
         <h3 className="text-lg font-semibold">Tus puntos</h3>
         <span className="text-xl font-bold text-primary">{userPoints}</span>

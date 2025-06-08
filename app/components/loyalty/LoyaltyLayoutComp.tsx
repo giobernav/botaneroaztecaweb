@@ -9,7 +9,6 @@ import { Schema } from "@/amplify/data/resource";
 import { SelectionSet } from "aws-amplify/api";
 import { useEffect, useMemo, useState } from "react";
 import CompleteProfileComp from "@/app/loyalty/CompleteProfileComp";
-import { formatNumber } from "@/app/utils/formatter";
 import { useAuthenticator } from "@aws-amplify/ui-react";
 import {
   fetchUserAttributes,
@@ -32,6 +31,8 @@ const customerSelectionSet = [
 export default function LoyaltyLayoutComp({
   customer,
   totalPoints,
+  hasNextTier = false,
+  neededPoints = 0,
   children,
 }: {
   customer: SelectionSet<
@@ -39,6 +40,8 @@ export default function LoyaltyLayoutComp({
     typeof customerSelectionSet
   > | null;
   totalPoints: number;
+  hasNextTier?: boolean;
+  neededPoints?: number;
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
@@ -86,8 +89,10 @@ export default function LoyaltyLayoutComp({
         name={customerName}
         phone={customer?.phone || ""}
         avatarUrl={signedUrl?.toString() || "/logo botanero chpi.png"}
-        membershipLevel={`Nivel ${customer?.memberTier || "BRONZE"}`}
-        points={formatNumber(totalPoints || 0, "decimal")}
+        membershipLevel={customer?.memberTier}
+        totalPoints={totalPoints}
+        hasNextTier={hasNextTier}
+        neededPoints={neededPoints}
       />
 
       <Card className="overflow-visible">

@@ -60,9 +60,11 @@ export default function LastVisitsComp({
                 </div>
               </div>
               <div className="text-right">
-                <p className="font-medium">
-                  {formatNumber((visit?.billAmount || 0) / 100)}
-                </p>
+                {!visit?.billAmount ? null : (
+                  <p className="font-medium">
+                    {formatNumber((visit?.billAmount || 0) / 100)}
+                  </p>
+                )}
                 <p className="text-small text-success">
                   +{visit.pointsEarned} puntos
                 </p>

@@ -7,21 +7,27 @@ import { Button } from "@heroui/button";
 import NextLink from "next/link";
 import { Icon } from "@iconify/react";
 import parsePhoneNumber from "libphonenumber-js";
+import { formatNumber } from "@/app/utils/formatter";
+import PointsComp from "@/app/loyalty/rewards/PointsComp";
 
 interface ProfileHeaderProps {
   name: string;
   phone: string;
   avatarUrl: string;
-  membershipLevel: string;
-  points: string | number;
+  membershipLevel?: string;
+  totalPoints: number;
+  hasNextTier?: boolean;
+  neededPoints?: number;
 }
 
 export function ProfileHeader({
   name,
   phone,
   avatarUrl,
-  membershipLevel,
-  points,
+  membershipLevel = "BRONZE",
+  totalPoints,
+  hasNextTier = false,
+  neededPoints = 0,
 }: ProfileHeaderProps) {
   return (
     <div className="flex flex-col md:flex-row items-center md:items-start gap-4 p-4 bg-content1 rounded-lg mb-6">
@@ -38,15 +44,24 @@ export function ProfileHeader({
           {parsePhoneNumber(phone)?.formatInternational()}
         </p>
         <div className="flex items-center gap-2 mt-1">
-          <Badge color="primary" variant="flat">
-            {membershipLevel}
-          </Badge>
+          <div className="text-default-500">
+            Nivel {membershipLevel || "BRONZE"}
+          </div>
           <div className="flex items-center gap-1">
             <Icon icon="lucide:star" className="text-warning" />
-            <span className="text-sm">{points} puntos</span>
+            <span className="text-sm">
+              {formatNumber(totalPoints || 0, "decimal")} puntos
+            </span>
           </div>
         </div>
       </div>
+
+      <PointsComp
+        userPoints={totalPoints}
+        memberTier={membershipLevel}
+        hasNextTier={hasNextTier}
+        nextTierPoints={neededPoints}
+      />
 
       <Button
         as={NextLink}
