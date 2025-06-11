@@ -2,12 +2,11 @@
 
 import React from "react";
 import { Avatar } from "@heroui/avatar";
-import { Badge } from "@heroui/badge";
 import { Button } from "@heroui/button";
 import NextLink from "next/link";
 import { Icon } from "@iconify/react";
 import parsePhoneNumber from "libphonenumber-js";
-import { formatNumber } from "@/app/utils/formatter";
+// import { formatNumber } from "@/app/utils/formatter";
 import PointsComp from "@/app/loyalty/rewards/PointsComp";
 
 interface ProfileHeaderProps {
@@ -24,7 +23,7 @@ export function ProfileHeader({
   name,
   phone,
   avatarUrl,
-  membershipLevel = "BRONZE",
+  membershipLevel = "base",
   totalPoints,
   hasNextTier = false,
   neededPoints = 0,
@@ -45,14 +44,15 @@ export function ProfileHeader({
         </p>
         <div className="flex items-center gap-2 mt-1">
           <div className="text-default-500">
-            Nivel {membershipLevel || "BRONZE"}
+            Nivel{" "}
+            <span className="text-primary">{membershipLevel || "base"}</span>
           </div>
-          <div className="flex items-center gap-1">
+          {/* <div className="flex items-center gap-1">
             <Icon icon="lucide:star" className="text-warning" />
             <span className="text-sm">
               {formatNumber(totalPoints || 0, "decimal")} puntos
             </span>
-          </div>
+          </div> */}
         </div>
       </div>
 

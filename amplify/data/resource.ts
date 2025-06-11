@@ -28,6 +28,7 @@ const schema = a
         tierEndDate: a.datetime(), // ISOString end of day, from first visit
         profilePicture: a.string(),
         owner: a.string(),
+        passKitMemberId: a.string(),
       })
       .authorization((allow) => [
         allow.owner(),
@@ -130,6 +131,7 @@ const schema = a
         lang: a.string().default("ES"),
         logo: a.string(),
         pointExpirationDays: a.integer().default(365),
+        passKitProgramId: a.string(),
       })
       .authorization((allow) => [
         allow.guest(),

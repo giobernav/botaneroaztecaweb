@@ -14,8 +14,8 @@ const PointsComp = ({
   return (
     <div className="bg-content1 py-4 rounded-lg w-full">
       <div className="flex justify-between items-center mb-2">
-        <h3 className="text-lg font-semibold">Tus puntos</h3>
-        <span className="text-xl font-bold text-primary">{userPoints}</span>
+        <h3 className="text-base font-semibold">Tus puntos en el nivel</h3>
+        <span className="text-lg font-bold text-primary">{userPoints}</span>
       </div>
       <Progress
         value={userPoints}

@@ -8,6 +8,7 @@ import { env } from "$amplify/env/post-confirmation";
 import dayjs from "dayjs";
 import { customAlphabet } from "nanoid";
 import { mockSystem } from "../../../app/utils/system-data";
+import { enrollMember } from "./helpers";
 
 const { resourceConfig, libraryOptions } = await getAmplifyDataClientConfig(
   env
@@ -32,18 +33,42 @@ export const handler: PostConfirmationTriggerHandler = async (event) => {
     const sortedTierLevels = [...tierLevels!].sort(
       (a, b) => a?.pointsRequired! - b?.pointsRequired!
     );
+
+    let passKitMemberId: string | undefined;
+
+    // Enroll user in PassKit
+    if (process.env.PASSKIT_PROGRAM_ID) {
+      const passKitMember = await enrollMember({
+        programId: process.env.PASSKIT_PROGRAM_ID,
+        tierId: sortedTierLevels[0]?.id || "base",
+        externalId: event.userName,
+        status: "ACTIVE",
+        person: {
+          externalId: event.userName,
+          forename: event.request.userAttributes.given_name || "",
+          surname: event.request.userAttributes.family_name || "",
+          emailAddress: event.request.userAttributes.email || "",
+          mobileNumber: event.request.userAttributes.phone_number || "",
+        },
+      });
+      console.log("passKitMember", passKitMember);
+      passKitMemberId = passKitMember.data?.id;
+    }
+
+    // Create Customer
     const customerRes = await client.models.Customer.create(
       {
         id: event.userName,
         phone: event.request.userAttributes.phone_number,
         secret: nanoid(),
         owner: event.request.userAttributes.sub,
-        memberTier: sortedTierLevels[0]?.id || "BRONZE",
+        memberTier: sortedTierLevels[0]?.id || "base",
         tierEndDate: dayjs()
           .add(pointExpirationDays || 365, "days")
           .endOf("day")
           .toISOString(),
         status: "ACTIVE",
+        passKitMemberId,
       },
       { selectionSet: ["id", "memberTier", "phone", "status"] }
     );

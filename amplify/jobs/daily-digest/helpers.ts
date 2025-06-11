@@ -1,6 +1,7 @@
 import { generateClient, SelectionSet } from "aws-amplify/data";
-import { type Schema } from "../../data/resource";
 import dayjs from "dayjs";
+import { type Schema } from "../../data/resource";
+import apiKeyAuth from "../../../lib/passkit/apiKeyAuth";
 
 const client = generateClient<Schema>();
 
@@ -14,6 +15,7 @@ export const customerSelectionSet = [
   "memberTier",
   "tierEndDate",
   "profilePicture",
+  "passKitMemberId",
 ] as const;
 
 const rewardSelectionSet = [
@@ -123,3 +125,145 @@ export const updateMemberTier = async (
     tierEndDate: now.add(1, "year").endOf("day").toISOString(),
   });
 };
+
+export const handleBirthdayReward = async (
+  customer: CustomerSS,
+  rewards: any[]
+) => {
+  if (customer.birthdate == dayjs().format("YYYY-MM-DD")) {
+    // create customer reward & visit to earn points
+    await client.models.CustomerReward.create({
+      customerId: customer.id,
+      rewardId: rewards[0].id,
+      expiryDate: dayjs().add(1, "year").endOf("day").toISOString(),
+      status: "ACTIVE",
+      type: rewards[0].type,
+      category: rewards[0].category,
+    });
+    // Crear Visit con entryType = "TRIGGER" para asignar los puntos ganados por cumpleaños
+    await client.models.Visit.create({
+      datetime: dayjs().toISOString(),
+      billAmount: null,
+      pointsEarned: 2000,
+      table: null,
+      status: "ACTIVE",
+      customerId: customer.id,
+      entryType: "TRIGGER",
+    });
+  }
+};
+
+// change tier of a member in a program
+export async function changeMemberTier({
+  memberId,
+  tierId,
+}: {
+  memberId: string;
+  tierId: string;
+}) {
+  if (!process.env.PASSKIT_API_URL) {
+    throw new Error("PASSKIT_API_URL environment variable is not set");
+  }
+
+  if (!memberId || !tierId) {
+    throw new Error("Member ID and Tier ID are required");
+  }
+
+  if (typeof memberId !== "string" || typeof tierId !== "string") {
+    throw new Error("Member ID and Tier ID must be strings");
+  }
+
+  const url = process.env.PASSKIT_API_URL + `/members/member/tier`;
+
+  const token = apiKeyAuth();
+
+  // Ensure the token is generated successfully
+  if (!token) {
+    throw new Error("Failed to generate API token");
+  }
+
+  try {
+    const response = await fetch(url, {
+      method: "PUT",
+      body: JSON.stringify({ memberId, tierId }),
+      headers: {
+        Authorization: token,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Response status: ${response.status}`);
+    }
+
+    const json = await response.json();
+    console.log(json);
+    return { success: true, data: json };
+  } catch (error) {
+    let message = "Unknown Error";
+    if (error instanceof Error) message = error.message;
+
+    return { success: false, message };
+  }
+}
+
+// set points for a member in a program
+export async function setPoints({
+  memberId,
+  points,
+  tierId = "", // optional tierId, can be empty
+  resetTierPoints = false, // optional, default is false
+}: {
+  memberId: string;
+  points: number;
+  tierId?: string; // optional tierId, can be empty
+  resetTierPoints?: boolean; // optional, default is false
+}) {
+  if (!process.env.PASSKIT_API_URL) {
+    throw new Error("PASSKIT_API_URL environment variable is not set");
+  }
+
+  if (!memberId || !points) {
+    throw new Error("Member ID and Points are required");
+  }
+
+  if (typeof memberId !== "string" || typeof points !== "number") {
+    throw new Error("Member ID must be a string and Points must be a number");
+  }
+
+  const url = process.env.PASSKIT_API_URL + `/members/member/points/set`;
+
+  const token = apiKeyAuth();
+
+  // Ensure the token is generated successfully
+  if (!token) {
+    throw new Error("Failed to generate API token");
+  }
+
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      body: JSON.stringify({
+        id: memberId,
+        tierPoints: points,
+        tierId,
+        resetTierPoints,
+      }),
+      headers: {
+        Authorization: token,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Response status: ${response.status}`);
+    }
+
+    const json = await response.json();
+    console.log(json);
+    return { success: true, data: json };
+  } catch (error) {
+    let message = "Unknown Error";
+    if (error instanceof Error) message = error.message;
+
+    return { success: false, message };
+  }
+}

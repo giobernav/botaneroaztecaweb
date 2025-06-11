@@ -3,22 +3,13 @@ import { Logger } from "@aws-lambda-powertools/logger";
 import { getAmplifyDataClientConfig } from "@aws-amplify/backend/function/runtime";
 import { env } from "$amplify/env/dDBVisitStreamFcn";
 import { Amplify } from "aws-amplify";
-import dayjs from "dayjs";
 import { type NativeAttributeValue, unmarshall } from "@aws-sdk/util-dynamodb";
 import {
-  createCustomerReward,
-  CustomerSS,
-  formatNumber,
-  getCompany,
+  earnPoints,
   getCustomer,
-  getLastVisits,
-  getPointsEarned,
-  groupBy,
-  listAvailableRewards,
-  listCustomerRewards,
-  updateMemberTier,
+  handleRewards,
+  handleTierLevels,
 } from "./helpers";
-import { mockSystem } from "../../../app/utils/system-data";
 
 const logger = new Logger({
   logLevel: "INFO",
@@ -30,111 +21,6 @@ const { resourceConfig, libraryOptions } = await getAmplifyDataClientConfig(
 );
 
 Amplify.configure(resourceConfig, libraryOptions);
-
-const handleRewards = async (
-  customerId: string,
-  retrievedCustomer: CustomerSS | null
-) => {
-  // Consultar ultimas Visits del Customer en 180 días
-  const lastVisits = await getLastVisits(customerId as string);
-  console.log("lastVisits", lastVisits);
-
-  // Puntos acumulados desde el inicio en el periodo
-  const pointsEarned: number = getPointsEarned(lastVisits);
-
-  // Obtener los últimos CustomerReward recibibos en el periodo
-  const customerRewards = await listCustomerRewards(customerId as string);
-  console.log("customerRewards", customerRewards);
-
-  const groupedCustomerRewards = groupBy(
-    customerRewards,
-    (rwd) => rwd.rewardId
-  );
-  console.log("groupedCustomerRewards", groupedCustomerRewards);
-
-  // Consultar Rewards disponibles
-  const availableRewards = await listAvailableRewards();
-  const sortedAvailableRewards = [...availableRewards]
-    .sort((a, b) => a.pointsRequired! - b.pointsRequired!)
-    .reverse();
-  console.log("sortedAvailableRewards", sortedAvailableRewards);
-
-  for (const availableReward of sortedAvailableRewards) {
-    const qty = +formatNumber(
-      pointsEarned / (availableReward?.pointsRequired || 0) -
-        (groupedCustomerRewards?.[availableReward.id]?.length || 0)
-    );
-
-    if (qty >= 1) {
-      // crear la cantidad de rewards disponibles y parar
-      for (let index = 0; index < qty; index++) {
-        await createCustomerReward(customerId as string, availableReward);
-      }
-      break;
-    }
-  }
-};
-
-const handleTierLevels = async (
-  customerId: string,
-  retrievedCustomer: CustomerSS | null
-) => {
-  // Últimas visitas del Customer para comprobar tierlevel
-  // y puntos obtenidos en el periodo
-  // Consultar ultimas Visits del Customer desde el tierEndDate
-  const tierVisits = await getLastVisits(
-    customerId as string,
-    retrievedCustomer?.tierEndDate as string
-  );
-  console.log("tierVisits", tierVisits);
-
-  // Puntos acumulados desde el inicio del tier (en el periodo)
-  const pointsEarned: number = getPointsEarned(tierVisits);
-
-  // Verificar si el tierEndDate sigue vigente,
-  let tierExpired =
-    dayjs().unix() > dayjs(retrievedCustomer?.tierEndDate).unix();
-  // El periodo es: endTierDate - 1 año a la fecha actual
-
-  const company = await getCompany(env.DEFAULT_COMPANY);
-  const { tierLevels } = company || mockSystem;
-
-  if (tierLevels?.length) {
-    if (!tierExpired) {
-      // Verificar memberTier, sube, se mantiene o baja
-      const currentMemberTier = retrievedCustomer?.memberTier;
-      const currentMemberTierIdx = tierLevels.findIndex(
-        (x) => x?.id === currentMemberTier
-      );
-
-      // Comprobar si hay siguiente nivel y si puede subir
-      if (currentMemberTierIdx < tierLevels.length - 1) {
-        const nextMemberTier = tierLevels[currentMemberTierIdx + 1];
-
-        if (
-          nextMemberTier?.pointsRequired &&
-          pointsEarned >= nextMemberTier?.pointsRequired
-        ) {
-          // update memberTier and set new tierEndDate
-          await updateMemberTier(customerId as string, nextMemberTier.id);
-        }
-      }
-    } else {
-      // si expiró
-      // Comprobar los puntos obtenidos hasta la fecha de vencimiento y asignar nuevo nivel
-      const sortedTierLevels = [...tierLevels]
-        .sort((a, b) => a?.pointsRequired! - b?.pointsRequired!)
-        .reverse();
-      for (const level of sortedTierLevels) {
-        if (level?.pointsRequired && pointsEarned >= level?.pointsRequired) {
-          // Nuevo nivel
-          await updateMemberTier(customerId as string, level.id);
-          break;
-        }
-      }
-    }
-  }
-};
 
 export const handler: DynamoDBStreamHandler = async (event) => {
   for (const record of event.Records) {
@@ -165,13 +51,34 @@ export const handler: DynamoDBStreamHandler = async (event) => {
           continue;
         }
 
+        // Añadir puntos obtenidos en la visita
+        if (newRecord.pointsEarned) {
+          // Update tier points in PassKit
+          logger.info(
+            `Earning points for customer ${newRecord.customerId}: ${newRecord.pointsEarned}`
+          );
+          // Call the function to earn points
+          // This function should handle the API call to PassKit
+          try {
+            await earnPoints({
+              memberId: retrievedCustomer.passKitMemberId as string,
+              points: newRecord.pointsEarned as number,
+            });
+          } catch (error) {
+            logger.error(
+              `Error earning points for customer ${newRecord.customerId}: ${error}`
+            );
+          }
+        }
+
         // Consultar Rewards disponibles y asignar
-        await handleRewards(newRecord.customerId as string, retrievedCustomer);
+        await handleRewards(newRecord.customerId as string);
 
         // Consultar y actualizar el nivel del Customer
         await handleTierLevels(
           newRecord.customerId as string,
-          retrievedCustomer
+          retrievedCustomer,
+          env.DEFAULT_COMPANY || "botaneroazteca"
         );
       }
     }

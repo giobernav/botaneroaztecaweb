@@ -1,5 +1,6 @@
 import { getCompany } from "../actions/company";
 import { getCustomer } from "../actions/customer";
+// import { listTiers } from "../actions/passkit";
 import { listVisits } from "../actions/visit";
 import LoyaltyLayoutComp from "../components/loyalty/LoyaltyLayoutComp";
 import { AuthGetCurrentUserServer } from "../utils/amplify-utils";
@@ -17,6 +18,11 @@ export default async function LoyaltyLayout({
   );
 
   const company = await getCompany(process.env.NEXT_PUBLIC_DEFAULT_COMPANY);
+
+  // const tiers = await listTiers(
+  //   process.env.NEXT_PUBLIC_PASSKIT_PROGRAM_ID || ""
+  // );
+  // console.log("Pass Kit Tiers:", tiers);
 
   const availableTiers = company.tierLevels
     ? [...company?.tierLevels].sort(

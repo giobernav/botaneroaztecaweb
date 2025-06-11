@@ -30,6 +30,7 @@ export const customerSelectionSet = [
   "tierEndDate",
   "memberTier",
   "profilePicture",
+  "passKitMemberId",
 ] as const;
 
 export default function ProfileForm({

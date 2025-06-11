@@ -15,6 +15,7 @@ const customerSelectionSet = [
   "tierEndDate",
   "memberTier",
   "profilePicture",
+  "passKitMemberId",
 ] as const;
 
 export async function updateProfile(
