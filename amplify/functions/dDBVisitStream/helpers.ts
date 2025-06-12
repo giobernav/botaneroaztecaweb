@@ -1,4 +1,5 @@
 import dayjs from "dayjs";
+import { env } from "$amplify/env/dDBVisitStreamFcn";
 import { generateClient, SelectionSet } from "aws-amplify/data";
 import { type Schema } from "../../data/resource";
 import { mockSystem } from "../../../app/utils/system-data";
@@ -376,7 +377,7 @@ export async function earnPoints({
   points: number;
   tierId?: string; // optional tierId, can be empty
 }) {
-  if (!process.env.PASSKIT_API_URL) {
+  if (!env.PASSKIT_API_URL) {
     throw new Error("PASSKIT_API_URL environment variable is not set");
   }
 
@@ -388,7 +389,7 @@ export async function earnPoints({
     throw new Error("Member ID must be a string and Points must be a number");
   }
 
-  const url = process.env.PASSKIT_API_URL + `/members/member/points/earn`;
+  const url = env.PASSKIT_API_URL + `/members/member/points/earn`;
 
   const token = apiKeyAuth();
 
@@ -433,7 +434,7 @@ export async function setPoints({
   tierId?: string; // optional tierId, can be empty
   resetTierPoints?: boolean; // optional, default is false
 }) {
-  if (!process.env.PASSKIT_API_URL) {
+  if (!env.PASSKIT_API_URL) {
     throw new Error("PASSKIT_API_URL environment variable is not set");
   }
 
@@ -445,7 +446,7 @@ export async function setPoints({
     throw new Error("Member ID must be a string and Points must be a number");
   }
 
-  const url = process.env.PASSKIT_API_URL + `/members/member/points/set`;
+  const url = env.PASSKIT_API_URL + `/members/member/points/set`;
 
   const token = apiKeyAuth();
 

@@ -1,3 +1,4 @@
+import { env } from "$amplify/env/post-confirmation";
 import apiKeyAuth from "../../../lib/passkit/apiKeyAuth";
 
 interface Person {
@@ -25,7 +26,7 @@ export async function enrollMember({
   status,
   person,
 }: Member) {
-  if (!process.env.PASSKIT_API_URL) {
+  if (!env.PASSKIT_API_URL) {
     throw new Error("PASSKIT_API_URL environment variable is not set");
   }
 
@@ -37,7 +38,7 @@ export async function enrollMember({
     throw new Error("Program ID, Member ID, and Tier ID must be strings");
   }
 
-  const url = process.env.PASSKIT_API_URL + `/members/member`;
+  const url = env.PASSKIT_API_URL + `/members/member`;
 
   const token = apiKeyAuth();
 

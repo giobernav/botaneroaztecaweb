@@ -3,7 +3,7 @@ import apiKeyAuth from "@/lib/passkit/apiKeyAuth";
 import transform from "@/lib/passkit/transform";
 
 export async function getProgram(programId: string) {
-  if (!process.env.PASSKIT_API_URL) {
+  if (!process.env.NEXT_PUBLIC_PASSKIT_API_URL) {
     throw new Error("PASSKIT_API_URL environment variable is not set");
   }
 
@@ -15,7 +15,8 @@ export async function getProgram(programId: string) {
     throw new Error("Program ID must be a string");
   }
 
-  const url = process.env.PASSKIT_API_URL + `/members/program/${programId}`;
+  const url =
+    process.env.NEXT_PUBLIC_PASSKIT_API_URL + `/members/program/${programId}`;
 
   const token = apiKeyAuth();
 
@@ -48,7 +49,7 @@ export async function getProgram(programId: string) {
 }
 
 export async function listTiers(programId: string) {
-  if (!process.env.PASSKIT_API_URL) {
+  if (!process.env.NEXT_PUBLIC_PASSKIT_API_URL) {
     throw new Error("PASSKIT_API_URL environment variable is not set");
   }
 
@@ -60,7 +61,7 @@ export async function listTiers(programId: string) {
     throw new Error("Program ID must be a string");
   }
 
-  const url = process.env.PASSKIT_API_URL + `/members/tiers/list`;
+  const url = process.env.NEXT_PUBLIC_PASSKIT_API_URL + `/members/tiers/list`;
 
   const token = apiKeyAuth();
 
@@ -123,7 +124,7 @@ export async function updateMember({
   status,
   person,
 }: Member & { memberId: string }) {
-  if (!process.env.PASSKIT_API_URL) {
+  if (!process.env.NEXT_PUBLIC_PASSKIT_API_URL) {
     throw new Error("PASSKIT_API_URL environment variable is not set");
   }
   if (!memberId || !programId || !tierId) {
@@ -136,7 +137,7 @@ export async function updateMember({
   ) {
     throw new Error("Member ID, Program ID, and Tier ID must be strings");
   }
-  const url = process.env.PASSKIT_API_URL + `/members/member`;
+  const url = process.env.NEXT_PUBLIC_PASSKIT_API_URL + `/members/member`;
   const token = apiKeyAuth();
   // Ensure the token is generated successfully
   if (!token) {
@@ -178,7 +179,7 @@ export async function changeMemberTier({
   memberId: string;
   tierId: string;
 }) {
-  if (!process.env.PASSKIT_API_URL) {
+  if (!process.env.NEXT_PUBLIC_PASSKIT_API_URL) {
     throw new Error("PASSKIT_API_URL environment variable is not set");
   }
 
@@ -190,7 +191,7 @@ export async function changeMemberTier({
     throw new Error("Member ID and Tier ID must be strings");
   }
 
-  const url = process.env.PASSKIT_API_URL + `/members/member/tier`;
+  const url = process.env.NEXT_PUBLIC_PASSKIT_API_URL + `/members/member/tier`;
 
   const token = apiKeyAuth();
 
@@ -231,7 +232,7 @@ export async function updateMemberExpiration({
   memberId: string;
   expiryDate: string;
 }) {
-  if (!process.env.PASSKIT_API_URL) {
+  if (!process.env.NEXT_PUBLIC_PASSKIT_API_URL) {
     throw new Error("PASSKIT_API_URL environment variable is not set");
   }
 
@@ -243,7 +244,8 @@ export async function updateMemberExpiration({
     throw new Error("Member ID and Expiration Date must be strings");
   }
 
-  const url = process.env.PASSKIT_API_URL + `/members/member/updateExpiry`;
+  const url =
+    process.env.NEXT_PUBLIC_PASSKIT_API_URL + `/members/member/updateExpiry`;
 
   const token = apiKeyAuth();
 
@@ -286,7 +288,7 @@ export async function earnPoints({
   points: number;
   tierId?: string; // optional tierId, can be empty
 }) {
-  if (!process.env.PASSKIT_API_URL) {
+  if (!process.env.NEXT_PUBLIC_PASSKIT_API_URL) {
     throw new Error("PASSKIT_API_URL environment variable is not set");
   }
 
@@ -298,7 +300,8 @@ export async function earnPoints({
     throw new Error("Member ID must be a string and Points must be a number");
   }
 
-  const url = process.env.PASSKIT_API_URL + `/members/member/points/earn`;
+  const url =
+    process.env.NEXT_PUBLIC_PASSKIT_API_URL + `/members/member/points/earn`;
 
   const token = apiKeyAuth();
 
@@ -343,7 +346,7 @@ export async function setPoints({
   tierId?: string; // optional tierId, can be empty
   resetTierPoints?: boolean; // optional, default is false
 }) {
-  if (!process.env.PASSKIT_API_URL) {
+  if (!process.env.NEXT_PUBLIC_PASSKIT_API_URL) {
     throw new Error("PASSKIT_API_URL environment variable is not set");
   }
 
@@ -355,7 +358,8 @@ export async function setPoints({
     throw new Error("Member ID must be a string and Points must be a number");
   }
 
-  const url = process.env.PASSKIT_API_URL + `/members/member/points/set`;
+  const url =
+    process.env.NEXT_PUBLIC_PASSKIT_API_URL + `/members/member/points/set`;
 
   const token = apiKeyAuth();
 

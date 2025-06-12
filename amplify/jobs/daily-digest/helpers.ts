@@ -1,5 +1,6 @@
 import { generateClient, SelectionSet } from "aws-amplify/data";
 import dayjs from "dayjs";
+import { env } from "$amplify/env/daily-digest";
 import { type Schema } from "../../data/resource";
 import apiKeyAuth from "../../../lib/passkit/apiKeyAuth";
 
@@ -161,7 +162,7 @@ export async function changeMemberTier({
   memberId: string;
   tierId: string;
 }) {
-  if (!process.env.PASSKIT_API_URL) {
+  if (!env.PASSKIT_API_URL) {
     throw new Error("PASSKIT_API_URL environment variable is not set");
   }
 
@@ -173,7 +174,7 @@ export async function changeMemberTier({
     throw new Error("Member ID and Tier ID must be strings");
   }
 
-  const url = process.env.PASSKIT_API_URL + `/members/member/tier`;
+  const url = env.PASSKIT_API_URL + `/members/member/tier`;
 
   const token = apiKeyAuth();
 
@@ -218,7 +219,7 @@ export async function setPoints({
   tierId?: string; // optional tierId, can be empty
   resetTierPoints?: boolean; // optional, default is false
 }) {
-  if (!process.env.PASSKIT_API_URL) {
+  if (!env.PASSKIT_API_URL) {
     throw new Error("PASSKIT_API_URL environment variable is not set");
   }
 
@@ -230,7 +231,7 @@ export async function setPoints({
     throw new Error("Member ID must be a string and Points must be a number");
   }
 
-  const url = process.env.PASSKIT_API_URL + `/members/member/points/set`;
+  const url = env.PASSKIT_API_URL + `/members/member/points/set`;
 
   const token = apiKeyAuth();
 
