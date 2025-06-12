@@ -2,12 +2,22 @@
 
 import { Card, CardBody } from "@heroui/card";
 import CustomerQr from "./CustomerQr";
+import { Button } from "@heroui/button";
+import { Icon } from "@iconify/react";
+import { Link } from "@heroui/link";
 
 export default function LoyaltyPageComp({
+  isMobile = false,
+  os,
   customerId,
+  passKitMemberId = "",
 }: {
+  isMobile?: boolean;
+  os?: string | null;
   customerId: string;
+  passKitMemberId?: string;
 }) {
+  console.log("passKitMemberId", passKitMemberId);
   return (
     <div className="py-4">
       <div className="flex flex-col items-center">
@@ -25,6 +35,33 @@ export default function LoyaltyPageComp({
             <p className="text-center text-sm text-default-500">
               ID: {customerId}
             </p>
+
+            {/* Add to wallet button */}
+            {/* https://pub1.pskt.io/{{PassKit ID}} */}
+            {isMobile ? (
+              <div className="flex flex-col w-full gap-3">
+                <Button
+                  as={Link}
+                  isExternal
+                  isDisabled={!passKitMemberId}
+                  href={`https://pub1.pskt.io/${passKitMemberId}`}
+                  color="default"
+                  className="w-full"
+                  startContent={
+                    <Icon
+                      icon={
+                        os === "Android"
+                          ? "logos:google-play-icon"
+                          : "logos:apple"
+                      }
+                      width={20}
+                    />
+                  }
+                >
+                  Add to Wallet
+                </Button>
+              </div>
+            ) : null}
           </CardBody>
         </Card>
 

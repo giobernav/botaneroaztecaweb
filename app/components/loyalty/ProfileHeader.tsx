@@ -8,6 +8,7 @@ import { Icon } from "@iconify/react";
 import parsePhoneNumber from "libphonenumber-js";
 // import { formatNumber } from "@/app/utils/formatter";
 import PointsComp from "@/app/loyalty/rewards/PointsComp";
+import { Chip } from "@heroui/chip";
 
 interface ProfileHeaderProps {
   name: string;
@@ -45,7 +46,10 @@ export function ProfileHeader({
         <div className="flex items-center gap-2 mt-1">
           <div className="text-default-500">
             Nivel{" "}
-            <span className="text-primary">{membershipLevel || "base"}</span>
+            {/* <span className="text-primary">{membershipLevel || "base"}</span> */}
+            <Chip color="default" variant="flat" className="font-medium">
+              {membershipLevel || "base"}
+            </Chip>
           </div>
           {/* <div className="flex items-center gap-1">
             <Icon icon="lucide:star" className="text-warning" />
