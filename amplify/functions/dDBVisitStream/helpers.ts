@@ -391,7 +391,7 @@ export async function earnPoints({
 
   const url = env.PASSKIT_API_URL + `/members/member/points/earn`;
 
-  const token = apiKeyAuth();
+  const token = apiKeyAuth(env.PASSKIT_REST_SECRET, env.PASSKIT_REST_KEY);
 
   // Ensure the token is generated successfully
   if (!token) {
@@ -403,6 +403,7 @@ export async function earnPoints({
       method: "POST",
       body: JSON.stringify({ id: memberId, tierPoints: points, tierId }),
       headers: {
+        "Content-Type": "application/json",
         Authorization: token,
       },
     });
@@ -448,7 +449,7 @@ export async function setPoints({
 
   const url = env.PASSKIT_API_URL + `/members/member/points/set`;
 
-  const token = apiKeyAuth();
+  const token = apiKeyAuth(env.PASSKIT_REST_SECRET, env.PASSKIT_REST_KEY);
 
   // Ensure the token is generated successfully
   if (!token) {
@@ -465,6 +466,7 @@ export async function setPoints({
         resetTierPoints,
       }),
       headers: {
+        "Content-Type": "application/json",
         Authorization: token,
       },
     });

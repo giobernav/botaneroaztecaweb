@@ -1,10 +1,12 @@
 import sign from "jwt-encode";
 
-const apiKeyAuth = () => {
-  const secret = process.env.PASSKIT_REST_SECRET;
+const apiKeyAuth = (
+  secret: string | undefined = process.env.PASSKIT_REST_SECRET,
+  key: string | undefined = process.env.PASSKIT_REST_KEY
+) => {
   const iat = Math.floor(Date.now() / 1000); // Current time in seconds since epoch
   const data = {
-    uid: process.env.PASSKIT_REST_KEY,
+    uid: key,
     iat,
     exp: iat + 3600,
   };

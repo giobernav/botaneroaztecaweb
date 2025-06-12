@@ -176,7 +176,7 @@ export async function changeMemberTier({
 
   const url = env.PASSKIT_API_URL + `/members/member/tier`;
 
-  const token = apiKeyAuth();
+  const token = apiKeyAuth(env.PASSKIT_REST_SECRET, env.PASSKIT_REST_KEY);
 
   // Ensure the token is generated successfully
   if (!token) {
@@ -188,6 +188,7 @@ export async function changeMemberTier({
       method: "PUT",
       body: JSON.stringify({ memberId, tierId }),
       headers: {
+        "Content-Type": "application/json",
         Authorization: token,
       },
     });
@@ -233,7 +234,7 @@ export async function setPoints({
 
   const url = env.PASSKIT_API_URL + `/members/member/points/set`;
 
-  const token = apiKeyAuth();
+  const token = apiKeyAuth(env.PASSKIT_REST_SECRET, env.PASSKIT_REST_KEY);
 
   // Ensure the token is generated successfully
   if (!token) {
@@ -250,6 +251,7 @@ export async function setPoints({
         resetTierPoints,
       }),
       headers: {
+        "Content-Type": "application/json",
         Authorization: token,
       },
     });

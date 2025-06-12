@@ -155,6 +155,7 @@ export async function updateMember({
         person,
       }),
       headers: {
+        "Content-Type": "application/json",
         Authorization: token,
       },
     });
@@ -205,6 +206,7 @@ export async function changeMemberTier({
       method: "PUT",
       body: JSON.stringify({ memberId, tierId }),
       headers: {
+        "Content-Type": "application/json",
         Authorization: token,
       },
     });
@@ -259,6 +261,7 @@ export async function updateMemberExpiration({
       method: "PUT",
       body: JSON.stringify({ id: memberId, expiryDate }),
       headers: {
+        "Content-Type": "application/json",
         Authorization: token,
       },
     });
@@ -315,6 +318,7 @@ export async function earnPoints({
       method: "POST",
       body: JSON.stringify({ id: memberId, tierPoints: points, tierId }),
       headers: {
+        "Content-Type": "application/json",
         Authorization: token,
       },
     });
@@ -378,6 +382,7 @@ export async function setPoints({
         resetTierPoints,
       }),
       headers: {
+        "Content-Type": "application/json",
         Authorization: token,
       },
     });

@@ -40,7 +40,7 @@ export async function enrollMember({
 
   const url = env.PASSKIT_API_URL + `/members/member`;
 
-  const token = apiKeyAuth();
+  const token = apiKeyAuth(env.PASSKIT_REST_SECRET, env.PASSKIT_REST_KEY);
 
   // Ensure the token is generated successfully
   if (!token) {
@@ -48,13 +48,17 @@ export async function enrollMember({
   }
 
   try {
+    const params = { programId, tierId, externalId, status, person };
+    console.log("Request Params:", params);
     const response = await fetch(url, {
       method: "POST",
-      body: JSON.stringify({ programId, tierId, externalId, status, person }),
+      body: JSON.stringify(params),
       headers: {
+        "Content-Type": "application/json",
         Authorization: token,
       },
     });
+    console.log("Response:", response);
 
     if (!response.ok) {
       throw new Error(`Response status: ${response.status}`);
