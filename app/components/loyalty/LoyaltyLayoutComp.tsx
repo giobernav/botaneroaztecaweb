@@ -35,6 +35,7 @@ export default function LoyaltyLayoutComp({
   hasNextTier = false,
   neededPoints = 0,
   children,
+  tiers = [],
 }: {
   customer: SelectionSet<
     Schema["Customer"]["type"],
@@ -44,6 +45,7 @@ export default function LoyaltyLayoutComp({
   hasNextTier?: boolean;
   neededPoints?: number;
   children: React.ReactNode;
+  tiers?: Schema["TierLevel"]["type"][] | undefined; // Assuming you have a TierLevel type in your schema
 }) {
   const pathname = usePathname();
   const { user } = useAuthenticator((context) => [context.user]);
@@ -82,6 +84,11 @@ export default function LoyaltyLayoutComp({
     }
   }, [customer?.profilePicture]);
 
+  const customerTierTitle = useMemo(() => {
+    const tier = tiers?.find((t) => t.id === customer?.memberTier);
+    return tier && tier.title ? tier.title : "Sin nivel";
+  }, [customer?.memberTier, tiers]);
+
   return (
     <div className="max-w-5xl mx-auto">
       <CompleteProfileComp customer={customer} userAttributes={attrs} />
@@ -90,7 +97,7 @@ export default function LoyaltyLayoutComp({
         name={customerName}
         phone={customer?.phone || ""}
         avatarUrl={signedUrl?.toString() || "/logo botanero chpi.png"}
-        membershipLevel={customer?.memberTier}
+        membershipLevel={customerTierTitle}
         totalPoints={totalPoints}
         hasNextTier={hasNextTier}
         neededPoints={neededPoints}

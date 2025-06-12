@@ -6,5 +6,6 @@ export const postConfirmationFcn = defineFunction({
   runtime: 20,
   environment: {
     DEFAULT_COMPANY: process.env?.NEXT_PUBLIC_DEFAULT_COMPANY || "",
+    PASSKIT_PROGRAM_ID: process.env?.NEXT_PUBLIC_PASSKIT_PROGRAM_ID || "",
   },
 });

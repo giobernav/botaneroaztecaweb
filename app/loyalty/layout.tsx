@@ -50,6 +50,21 @@ export default async function LoyaltyLayout({
           totalPoints={totalPoints || 0}
           hasNextTier={hasNextTier}
           neededPoints={neededPoints}
+          tiers={availableTiers
+            ?.filter((tier) => tier !== null)
+            .map((tier) =>
+              tier
+                ? {
+                    ...tier,
+                    status:
+                      tier.status === "ACTIVE" ||
+                      tier.status === "INACTIVE" ||
+                      tier.status === null
+                        ? tier.status
+                        : undefined,
+                  }
+                : tier
+            )}
         >
           {children}
         </LoyaltyLayoutComp>

@@ -37,9 +37,9 @@ export const handler: PostConfirmationTriggerHandler = async (event) => {
     let passKitMemberId: string | undefined;
 
     // Enroll user in PassKit
-    if (process.env.PASSKIT_PROGRAM_ID) {
+    if (env.PASSKIT_PROGRAM_ID) {
       const passKitMember = await enrollMember({
-        programId: process.env.PASSKIT_PROGRAM_ID,
+        programId: env.PASSKIT_PROGRAM_ID,
         tierId: sortedTierLevels[0]?.id || "base",
         externalId: event.userName,
         status: "ACTIVE",

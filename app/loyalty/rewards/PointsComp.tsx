@@ -7,7 +7,6 @@ const PointsComp = ({
   nextTierPoints,
 }: {
   userPoints?: number;
-  memberTier?: string;
   hasNextTier: boolean;
   nextTierPoints: number;
 }) => {

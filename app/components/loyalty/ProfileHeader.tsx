@@ -24,7 +24,7 @@ export function ProfileHeader({
   name,
   phone,
   avatarUrl,
-  membershipLevel = "base",
+  membershipLevel = "Bronce",
   totalPoints,
   hasNextTier = false,
   neededPoints = 0,
@@ -48,7 +48,7 @@ export function ProfileHeader({
             Nivel{" "}
             {/* <span className="text-primary">{membershipLevel || "base"}</span> */}
             <Chip color="default" variant="flat" className="font-medium">
-              {membershipLevel || "base"}
+              {membershipLevel || "Bronce"}
             </Chip>
           </div>
           {/* <div className="flex items-center gap-1">
@@ -62,7 +62,6 @@ export function ProfileHeader({
 
       <PointsComp
         userPoints={totalPoints}
-        memberTier={membershipLevel}
         hasNextTier={hasNextTier}
         nextTierPoints={neededPoints}
       />
