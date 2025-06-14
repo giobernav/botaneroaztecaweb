@@ -15,6 +15,7 @@ interface ProfileHeaderProps {
   phone: string;
   avatarUrl: string;
   membershipLevel?: string;
+  membershipDiscount?: string | number;
   totalPoints: number;
   hasNextTier?: boolean;
   neededPoints?: number;
@@ -25,6 +26,7 @@ export function ProfileHeader({
   phone,
   avatarUrl,
   membershipLevel = "Bronce",
+  membershipDiscount = "5",
   totalPoints,
   hasNextTier = false,
   neededPoints = 0,
@@ -49,6 +51,13 @@ export function ProfileHeader({
             {/* <span className="text-primary">{membershipLevel || "base"}</span> */}
             <Chip color="default" variant="flat" className="font-medium">
               {membershipLevel || "Bronce"}
+            </Chip>{" "}
+            <Chip
+              color="warning"
+              endContent={<Icon icon="ic:twotone-discount" />}
+              variant="flat"
+            >
+              {membershipDiscount}%
             </Chip>
           </div>
           {/* <div className="flex items-center gap-1">

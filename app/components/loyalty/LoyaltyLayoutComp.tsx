@@ -89,6 +89,11 @@ export default function LoyaltyLayoutComp({
     return tier && tier.title ? tier.title : "Sin nivel";
   }, [customer?.memberTier, tiers]);
 
+  const customerTierDiscount = useMemo(() => {
+    const tier = tiers?.find((t) => t.id === customer?.memberTier);
+    return tier && tier.discount ? tier.discount : 0;
+  }, [customer?.memberTier, tiers]);
+
   return (
     <div className="max-w-5xl mx-auto">
       <CompleteProfileComp customer={customer} userAttributes={attrs} />
@@ -98,6 +103,7 @@ export default function LoyaltyLayoutComp({
         phone={customer?.phone || ""}
         avatarUrl={signedUrl?.toString() || "/logo botanero chpi.png"}
         membershipLevel={customerTierTitle}
+        membershipDiscount={customerTierDiscount}
         totalPoints={totalPoints}
         hasNextTier={hasNextTier}
         neededPoints={neededPoints}
