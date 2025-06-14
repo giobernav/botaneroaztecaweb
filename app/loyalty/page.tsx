@@ -13,9 +13,9 @@ export default async function LoyaltyPage() {
   const userAgent = headersList.get("user-agent");
   const { device, os } = UAParser(userAgent || "");
 
-  console.log(device.type); // N900
-  console.log(device.vendor); // N900
-  console.log(os.name); // N900
+  // console.log(device.type); // N900
+  // console.log(device.vendor); // N900
+  // console.log(os.name); // N900
 
   return (
     <LoyaltyPageComp

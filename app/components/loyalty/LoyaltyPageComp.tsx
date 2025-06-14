@@ -19,7 +19,7 @@ export default function LoyaltyPageComp({
   customerId: string;
   passKitMemberId?: string;
 }) {
-  console.log("passKitMemberId", passKitMemberId);
+  // console.log("passKitMemberId", passKitMemberId);
   return (
     <div className="py-4">
       <div className="flex flex-col items-center">
