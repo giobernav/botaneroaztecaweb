@@ -1,4 +1,3 @@
-import dayjs from "dayjs";
 import type { DynamoDBStreamHandler } from "aws-lambda";
 import { Logger } from "@aws-lambda-powertools/logger";
 import { generateClient } from "aws-amplify/data";
@@ -7,6 +6,11 @@ import { env } from "$amplify/env/dDBCustomerStreamFcn";
 import { Amplify } from "aws-amplify";
 import { type NativeAttributeValue, unmarshall } from "@aws-sdk/util-dynamodb";
 import { type Schema } from "../../data/resource";
+import {
+  customerSelectionSet,
+  handleCompleteProfileReward,
+  handleEnrollMember,
+} from "./helpers";
 
 const logger = new Logger({
   logLevel: "INFO",
@@ -52,82 +56,24 @@ export const handler: DynamoDBStreamHandler = async (event) => {
         const { data: retrievedCustomer } = await client.models.Customer.get(
           { id: customerId },
           {
-            selectionSet: [
-              "id",
-              "name",
-              "lastName",
-              "email",
-              "phone",
-              "birthdate",
-            ],
+            selectionSet: customerSelectionSet,
           }
         );
+        console.log("retrievedCustomer", retrievedCustomer);
 
-        const isProfileComplete = Boolean(
-          retrievedCustomer?.name &&
-            retrievedCustomer.lastName &&
-            retrievedCustomer.email &&
-            retrievedCustomer.phone &&
-            retrievedCustomer.birthdate
-        );
-        console.log("isProfileComplete", isProfileComplete);
+        // Comprobar que el perfil tiene email y phone pero no tiene passKitMemberId
+        if (
+          !retrievedCustomer?.passKitMemberId &&
+          retrievedCustomer?.email &&
+          retrievedCustomer?.phone
+        ) {
+          console.log("Enrolling member in PassKit");
+          await handleEnrollMember(retrievedCustomer);
+        }
 
-        // Verificar que no se haya entregado esa recompensa
-        const { data: retrievedCusRew, errors } =
-          await client.models.CustomerReward.listCusRewByCustomer(
-            {
-              customerId,
-              typeCategory: {
-                eq: {
-                  type: "ONCE",
-                  category: "PROFILE",
-                },
-              },
-            },
-            {
-              selectionSet: [
-                "id",
-                "customerId",
-                "rewardId",
-                "status",
-                "expiryDate",
-                "category",
-                "type",
-              ],
-            }
-          );
-
-        console.log("retrievedCusRew", retrievedCusRew, errors);
-
-        if (isProfileComplete && !retrievedCusRew.length) {
-          // Find Reward
-          const { data: retrievedRewards } =
-            await client.models.Reward.listRewardByCategory({
-              category: "PROFILE",
-            });
-          console.log("retrievedRewards", retrievedRewards);
-
-          if (retrievedRewards.length) {
-            // Crear CustomerReward de recompensa del perfil
-            await client.models.CustomerReward.create({
-              customerId,
-              rewardId: retrievedRewards[0].id,
-              expiryDate: dayjs().add(1, "year").endOf("day").toISOString(),
-              status: "REDEEMED",
-              type: retrievedRewards[0].type,
-              category: retrievedRewards[0].category,
-            });
-            // Crear Visit con entryType = "TRIGGER" para asignar los puntos ganados por completar el perfil
-            await client.models.Visit.create({
-              datetime: dayjs().toISOString(),
-              billAmount: null,
-              pointsEarned: 1000,
-              table: null,
-              status: "ACTIVE",
-              customerId,
-              entryType: "TRIGGER",
-            });
-          }
+        // Comprobar si el usuario completó su perfil de usuario
+        if (retrievedCustomer) {
+          await handleCompleteProfileReward(retrievedCustomer);
         }
       }
     }

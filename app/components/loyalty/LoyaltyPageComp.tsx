@@ -5,6 +5,8 @@ import CustomerQr from "./CustomerQr";
 import { Button } from "@heroui/button";
 import { Icon } from "@iconify/react";
 import { Link } from "@heroui/link";
+import { Alert } from "@heroui/alert";
+import NextLink from "next/link";
 
 export default function LoyaltyPageComp({
   isMobile = false,
@@ -60,6 +62,29 @@ export default function LoyaltyPageComp({
                 >
                   Add to Wallet
                 </Button>
+              </div>
+            ) : null}
+
+            {!passKitMemberId ? (
+              <div className="flex items-center justify-center w-full">
+                <Alert
+                  color="secondary"
+                  hideIcon
+                  description="Actualiza tu perfil para descargar tu tarjeta de lealtad en tu wallet."
+                  endContent={
+                    <Button
+                      as={NextLink}
+                      href="/profile"
+                      color="secondary"
+                      size="sm"
+                      variant="flat"
+                    >
+                      Actualizar
+                    </Button>
+                  }
+                  title="Agrega tu email"
+                  variant="faded"
+                />
               </div>
             ) : null}
           </CardBody>

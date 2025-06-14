@@ -8,7 +8,7 @@ import { env } from "$amplify/env/post-confirmation";
 import dayjs from "dayjs";
 import { customAlphabet } from "nanoid";
 import { mockSystem } from "../../../app/utils/system-data";
-import { enrollMember } from "./helpers";
+// import { enrollMember } from "./helpers";
 
 const { resourceConfig, libraryOptions } = await getAmplifyDataClientConfig(
   env
@@ -37,23 +37,23 @@ export const handler: PostConfirmationTriggerHandler = async (event) => {
     let passKitMemberId: string | undefined;
 
     // Enroll user in PassKit
-    if (env.PASSKIT_PROGRAM_ID) {
-      const passKitMember = await enrollMember({
-        programId: env.PASSKIT_PROGRAM_ID,
-        tierId: sortedTierLevels[0]?.id || "base",
-        externalId: event.userName,
-        status: "ACTIVE",
-        person: {
-          externalId: event.userName,
-          forename: event.request.userAttributes.given_name || "",
-          surname: event.request.userAttributes.family_name || "",
-          emailAddress: event.request.userAttributes.email || "",
-          mobileNumber: event.request.userAttributes.phone_number || "",
-        },
-      });
-      console.log("passKitMember", passKitMember);
-      passKitMemberId = passKitMember.data?.id;
-    }
+    // if (env.PASSKIT_PROGRAM_ID) {
+    //   const passKitMember = await enrollMember({
+    //     programId: env.PASSKIT_PROGRAM_ID,
+    //     tierId: sortedTierLevels[0]?.id || "base",
+    //     externalId: event.userName,
+    //     status: "ACTIVE",
+    //     person: {
+    //       externalId: event.userName,
+    //       forename: event.request.userAttributes.given_name || "",
+    //       surname: event.request.userAttributes.family_name || "",
+    //       emailAddress: event.request.userAttributes.email || "",
+    //       mobileNumber: event.request.userAttributes.phone_number || "",
+    //     },
+    //   });
+    //   console.log("passKitMember", passKitMember);
+    //   passKitMemberId = passKitMember.data?.id;
+    // }
 
     // Create Customer
     const customerRes = await client.models.Customer.create(
