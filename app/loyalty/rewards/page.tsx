@@ -1,4 +1,3 @@
-import { getCompany } from "@/app/actions/company";
 import { getCustomer } from "../../actions/customer";
 import { listVisits } from "../../actions/visit";
 import { AuthGetCurrentUserServer } from "../../utils/amplify-utils";

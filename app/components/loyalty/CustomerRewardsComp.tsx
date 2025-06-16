@@ -56,6 +56,8 @@ const CustomerRewardsComp = ({ customerId }: { customerId?: string }) => {
             customerId: customerId!,
           },
           {
+            authMode: "userPool",
+            sortDirection: "DESC",
             filter: {
               status: { ne: "INACTIVE" },
               expiryDate: { ge: dayjs().startOf("day").toISOString() },

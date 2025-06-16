@@ -66,9 +66,14 @@ export async function registerVisit(
       ""
     );
 
-    const cognitoUser = await cookiesClient.queries.getCognitoUser({
-      username: customerPhone,
-    });
+    const cognitoUser = await cookiesClient.queries.getCognitoUser(
+      {
+        username: customerPhone,
+      },
+      {
+        authMode: "userPool",
+      }
+    );
     customerId = cognitoUser.data?.Username!;
   }
 
@@ -82,12 +87,17 @@ export async function registerVisit(
   const now = new Date();
 
   //  comprobar si existe un registro del mismo día
-  const { data } = await cookiesClient.models.Visit.listVisitByCustomer({
-    customerId,
-    datetime: {
-      beginsWith: now.toISOString().substring(0, 10),
+  const { data } = await cookiesClient.models.Visit.listVisitByCustomer(
+    {
+      customerId,
+      datetime: {
+        beginsWith: now.toISOString().substring(0, 10),
+      },
     },
-  });
+    {
+      authMode: "userPool",
+    }
+  );
 
   if (data && data.length) {
     return {
@@ -110,7 +120,8 @@ export async function registerVisit(
 
   // mutate data
   const { errors, data: newVisit } = await cookiesClient.models.Visit.create(
-    rawFormData
+    rawFormData,
+    { authMode: "userPool" }
   );
   console.log("newVisit", newVisit, errors);
 
@@ -144,6 +155,7 @@ export async function listVisits(customerId: string, endDate?: string | null) {
         },
       },
       {
+        authMode: "userPool",
         sortDirection: "DESC",
         selectionSet: [
           "id",

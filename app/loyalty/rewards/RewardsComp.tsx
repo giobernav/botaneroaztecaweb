@@ -48,6 +48,7 @@ const RewardsComp = ({
             category: "COUPON",
           },
           {
+            authMode: "userPool",
             filter: {
               type: { eq: "RECURRENT" },
               status: { eq: "ACTIVE" },

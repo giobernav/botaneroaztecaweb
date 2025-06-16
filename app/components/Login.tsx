@@ -75,7 +75,10 @@ function Login({ nextUrl }: { nextUrl?: string }) {
     if (isValidPhoneNumber(phone)) {
       setIsPhoneValid(true);
       const { data: retrievedUser, errors } =
-        await client.queries.getCognitoUser({ username: phone });
+        await client.queries.getCognitoUser(
+          { username: phone },
+          { authMode: "identityPool" }
+        );
       console.log("retrievedUser", retrievedUser, errors);
 
       if (retrievedUser?.Username) {

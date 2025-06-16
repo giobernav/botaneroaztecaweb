@@ -31,9 +31,11 @@ const schema = a
         passKitMemberId: a.string(),
       })
       .authorization((allow) => [
-        allow.owner(),
+        allow.owner().to(["read", "update"]),
+        allow.groups(["admin"]).to(["create", "read", "update"]),
         allow.guest().to(["read"]),
         allow.authenticated("identityPool"),
+        allow.authenticated("userPools").to(["read"]),
       ]),
     Reward: a
       .model({
@@ -54,6 +56,8 @@ const schema = a
       .authorization((allow) => [
         allow.guest(),
         allow.authenticated("identityPool"),
+        allow.authenticated("userPools").to(["read"]),
+        allow.groups(["admin"]).to(["create", "update", "delete", "read"]),
       ]),
     Visit: a
       .model({
@@ -73,6 +77,7 @@ const schema = a
       ])
       .authorization((allow) => [
         allow.authenticated("identityPool").to(["read"]),
+        allow.authenticated("userPools").to(["read"]),
         allow
           .groups(["admin", "manager"])
           .to(["create", "update", "delete", "read"]),
@@ -97,7 +102,10 @@ const schema = a
           .sortKeys(["createdAt"])
           .queryField("listCusRewByCustomerByCreatedAt"),
       ])
-      .authorization((allow) => [allow.authenticated("identityPool")]),
+      .authorization((allow) => [
+        allow.authenticated("identityPool"),
+        allow.authenticated("userPools"),
+      ]),
     CognitoGetUserResponse: a.customType({
       Username: a.string(),
       Enabled: a.boolean(),
@@ -111,6 +119,7 @@ const schema = a
       .authorization((allow) => [
         allow.guest(),
         allow.authenticated("identityPool"),
+        allow.authenticated("userPools"),
       ]),
     TierLevel: a.customType({
       id: a.id().required(),
@@ -136,6 +145,7 @@ const schema = a
       .authorization((allow) => [
         allow.guest(),
         allow.authenticated("identityPool"),
+        allow.authenticated("userPools").to(["read"]),
       ]),
   })
   .authorization((allow) => [

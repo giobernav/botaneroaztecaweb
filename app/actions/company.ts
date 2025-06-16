@@ -7,7 +7,10 @@ export async function getCompany(id?: string) {
     return mockSystem;
   }
 
-  const { data } = await cookiesClient.models.Company.get({ id });
+  const { data } = await cookiesClient.models.Company.get(
+    { id },
+    { authMode: "userPool" }
+  );
 
   if (!data) {
     return mockSystem;

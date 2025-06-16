@@ -3,7 +3,10 @@ import { getCustomer } from "../actions/customer";
 // import { listTiers } from "../actions/passkit";
 import { listVisits } from "../actions/visit";
 import LoyaltyLayoutComp from "../components/loyalty/LoyaltyLayoutComp";
-import { AuthGetCurrentUserServer } from "../utils/amplify-utils";
+import {
+  AuthGetCurrentSessionServer,
+  AuthGetCurrentUserServer,
+} from "../utils/amplify-utils";
 
 export default async function LoyaltyLayout({
   children,
@@ -11,6 +14,7 @@ export default async function LoyaltyLayout({
   children: React.ReactNode;
 }) {
   const user = await AuthGetCurrentUserServer();
+  await AuthGetCurrentSessionServer();
   const customer = await getCustomer(user?.userId!);
   const { totalPoints } = await listVisits(
     user?.userId!,

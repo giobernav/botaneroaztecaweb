@@ -11,7 +11,7 @@ async function getCustomer(userId: string) {
       id: userId!,
     },
     {
-      authMode: "identityPool",
+      // authMode: "identityPool",
       selectionSet: ["id", "phone", "secret"],
     }
   );

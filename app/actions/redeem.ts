@@ -46,9 +46,12 @@ export async function redeemReward(
   if (customerRewardId) {
     // Check if the customerRewardId is valid
     const { data: customerReward } =
-      await cookiesClient.models.CustomerReward.get({
-        id: customerRewardId,
-      });
+      await cookiesClient.models.CustomerReward.get(
+        {
+          id: customerRewardId,
+        },
+        { authMode: "userPool" }
+      );
 
     if (!customerReward) {
       return {
@@ -67,9 +70,12 @@ export async function redeemReward(
 
     console.log("rawFormData", rawFormData);
 
-    const cognitoUser = await cookiesClient.queries.getCognitoUser({
-      username: rawFormData?.customerPhone.replace(/\s+/g, ""),
-    });
+    const cognitoUser = await cookiesClient.queries.getCognitoUser(
+      {
+        username: rawFormData?.customerPhone.replace(/\s+/g, ""),
+      },
+      { authMode: "userPool" }
+    );
     const customerId = cognitoUser.data?.Username!;
 
     if (!customerId) {
@@ -90,6 +96,7 @@ export async function redeemReward(
             customerId,
           },
           {
+            authMode: "userPool",
             filter: {
               rewardId: {
                 contains: rawFormData?.rewardId,
@@ -157,10 +164,13 @@ export async function redeemReward(
     console.log(`Reward ${customerRewardId} has expired.`);
   }
 
-  await cookiesClient.models.CustomerReward.update({
-    id: cusRew.id,
-    status: "REDEEMED",
-  });
+  await cookiesClient.models.CustomerReward.update(
+    {
+      id: cusRew.id,
+      status: "REDEEMED",
+    },
+    { authMode: "userPool" }
+  );
 
   // Here you would implement the logic to redeem the reward
   // For example, updating the user's points, sending a confirmation, etc.

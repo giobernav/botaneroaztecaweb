@@ -59,11 +59,14 @@ export async function updateProfile(
   });
   console.log("updatedData", updatedData);
 
-  const { data, errors } = await cookiesClient.models.Customer.update({
-    id: customer.id,
-    profilePicture: profilePicturePath || customer.profilePicture,
-    ...updatedData,
-  });
+  const { data, errors } = await cookiesClient.models.Customer.update(
+    {
+      id: customer.id,
+      profilePicture: profilePicturePath || customer.profilePicture,
+      ...updatedData,
+    },
+    { authMode: "userPool" }
+  );
   console.log("updated profile data", data);
 
   if (errors) {
@@ -80,13 +83,13 @@ export async function getCustomer(userId: string) {
       id: userId!,
     },
     {
-      authMode: "identityPool",
+      authMode: "userPool",
       selectionSet: customerSelectionSet,
     }
   );
 
   if (errors) {
-    console.log("errors", errors);
+    console.log("getCustomer errors", errors);
   }
 
   return customer;

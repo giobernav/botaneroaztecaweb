@@ -19,6 +19,9 @@ import { useHash } from "../hooks/useHash";
 import { useAuthenticator } from "@aws-amplify/ui-react";
 import { useRouter } from "next/navigation";
 import { Hub } from "aws-amplify/utils";
+import { fetchAuthSession } from "aws-amplify/auth";
+import type { AuthSession } from "aws-amplify/auth";
+import { Skeleton } from "@heroui/skeleton";
 
 const menuItems = [
   { id: "home", label: "Inicio", path: "/" },
@@ -30,10 +33,28 @@ const menuItems = [
   },
   { id: "loyalty", label: "Programa de lealtad", path: "/loyalty" },
   { id: "profile", label: "Mi perfil", path: "/profile", authRoute: true },
+  {
+    id: "management",
+    label: "Panel de administración",
+    path: "/management",
+    authRoute: true,
+    roles: ["admin", "manager"],
+  },
   // {id: "help", label: "Ayuda & Comentarios", path: "/help"},
   { id: "signIn", label: "Iniciar sesión / Registrarse", path: "/login" },
   { id: "logout", label: "Cerrar sesión", path: undefined, authRoute: true },
 ];
+
+const handleUserGroups = (userSession: AuthSession) => {
+  if (!userSession) {
+    return [];
+  }
+  const groups = userSession?.tokens?.accessToken.payload["cognito:groups"];
+  console.log("User groups:", groups);
+  return Array.isArray(groups)
+    ? groups.filter((g): g is string => typeof g === "string")
+    : [];
+};
 
 function TopNavbar() {
   const router = useRouter();
@@ -42,8 +63,9 @@ function TopNavbar() {
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { user, signOut } = useAuthenticator((context) => [context.user]);
-
   const [isAuthenticated, setIsAuthenticated] = useState(!!user);
+  const [isLoading, setIsLoading] = useState(true);
+  const [userGroups, setUserGroups] = useState<string[]>([]);
 
   // Initialize the state based on the user object
   useEffect(() => {
@@ -57,9 +79,29 @@ function TopNavbar() {
   }, [pathname, hash]);
 
   useEffect(() => {
+    async function fetchSession() {
+      try {
+        setIsLoading(true);
+        // Check if the user is authenticated
+        const session = await fetchAuthSession();
+        const userGroups = handleUserGroups(session);
+        // console.log("Client side user groups:", userGroups);
+        setUserGroups(userGroups);
+      } catch (error) {
+        console.error("Error fetching session:", error);
+        setUserGroups([]);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
     // Close the menu when the user logs out
     if (!user) {
       setIsMenuOpen(false);
+    }
+
+    if (user) {
+      fetchSession();
     }
   }, [user]);
 
@@ -154,6 +196,10 @@ function TopNavbar() {
             isActive={pathname === item.path}
             hidden={
               (!isAuthenticated && item.authRoute) ||
+              (isAuthenticated &&
+                item.authRoute &&
+                item.roles?.length &&
+                !item.roles?.some((role) => userGroups?.includes(role))) ||
               (isAuthenticated && item.id === "signIn")
             }
           >
@@ -189,6 +235,9 @@ function TopNavbar() {
             )}
           </NavbarMenuItem>
         ))}
+        <NavbarMenuItem>
+          {isLoading ? <Skeleton className="w-48 h-8 rounded-lg" /> : null}
+        </NavbarMenuItem>
       </NavbarMenu>
     </Navbar>
   );
