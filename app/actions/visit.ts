@@ -84,27 +84,29 @@ export async function registerVisit(
     };
   }
 
-  const now = new Date();
+  // const now = new Date();
 
   //  comprobar si existe un registro del mismo día
-  const { data } = await cookiesClient.models.Visit.listVisitByCustomer(
-    {
-      customerId,
-      datetime: {
-        beginsWith: now.toISOString().substring(0, 10),
-      },
-    },
-    {
-      authMode: "userPool",
-    }
-  );
+  // TODO: descomentar cuando se implemente el forzar registro de visitas
+  // admin can force register a visit
+  // const { data } = await cookiesClient.models.Visit.listVisitByCustomer(
+  //   {
+  //     customerId,
+  //     datetime: {
+  //       beginsWith: now.toISOString().substring(0, 10),
+  //     },
+  //   },
+  //   {
+  //     authMode: "userPool",
+  //   }
+  // );
 
-  if (data && data.length) {
-    return {
-      success: false,
-      errors: ["Ya existe visita registrada en menos de 24 horas."],
-    };
-  }
+  // if (data && data.length) {
+  //   return {
+  //     success: false,
+  //     errors: ["Ya existe visita registrada en menos de 24 horas."],
+  //   };
+  // }
 
   const billAmount = +(+validationResult.data.billAmount * 100).toFixed(0);
   const rawFormData = {

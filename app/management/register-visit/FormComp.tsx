@@ -113,7 +113,7 @@ export default function FormComp() {
         {isQRMode ? "Escanear QR" : "Número de celular"}
       </Switch>
 
-      {!isQRMode && (
+      {!isQRMode ? (
         <PhoneInput
           labels={es}
           international
@@ -130,10 +130,8 @@ export default function FormComp() {
           defaultValue={state?.form?.customerPhone}
           className="w-full"
         />
-      )}
-
-      {isQRMode && (
-        <div className="w-64 h-64 mx-auto">
+      ) : (
+        <div className="relative w-64 h-64 mx-auto">
           <Scanner
             onScan={onScan}
             onError={(error: any) => {
@@ -141,6 +139,11 @@ export default function FormComp() {
             }}
             paused={!isActive}
           />
+          {customerId ? (
+            <div className="absolute inset-0 flex items-center justify-center bg-lime-500 bg-opacity-60">
+              <Icon icon="lucide:circle-check" className="w-32 h-32" />
+            </div>
+          ) : null}
         </div>
       )}
 

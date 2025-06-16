@@ -94,7 +94,7 @@ export function RedeemRewardForm() {
 
   return (
     <Form className="space-y-4" onSubmit={handleSubmit}>
-      <div className="flex items-center justify-between p-2 bg-gray-50 rounded-lg">
+      <div className="flex items-center justify-between p-2 rounded-lg">
         <Switch
           isSelected={isQRMode}
           onValueChange={setIsQRMode}
