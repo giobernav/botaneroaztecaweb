@@ -34,10 +34,9 @@ export async function AuthGetCurrentSessionServer() {
       nextServerContext: { cookies },
       operation: (contextSpec) => fetchAuthSession(contextSpec),
     });
-    const groups =
-      currentSession.tokens?.accessToken?.payload?.["cognito:groups"] || [];
-
-    console.log("User groups:", groups);
+    // const groups =
+    //   currentSession.tokens?.accessToken?.payload?.["cognito:groups"] || [];
+    // console.log("User groups:", groups);
     return currentSession;
   } catch (error) {
     console.error(error);

@@ -50,7 +50,7 @@ const handleUserGroups = (userSession: AuthSession) => {
     return [];
   }
   const groups = userSession?.tokens?.accessToken.payload["cognito:groups"];
-  console.log("User groups:", groups);
+  // console.log("User groups:", groups);
   return Array.isArray(groups)
     ? groups.filter((g): g is string => typeof g === "string")
     : [];
