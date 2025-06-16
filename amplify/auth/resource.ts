@@ -10,8 +10,12 @@ export const auth = defineAuth({
   loginWith: {
     phone: true,
   },
+  groups: ["admin", "manager", "everyone"],
   triggers: {
     postConfirmation: postConfirmationFcn,
   },
-  access: (allow) => [allow.resource(cognitoGetUserFcn).to(["getUser"])],
+  access: (allow) => [
+    allow.resource(cognitoGetUserFcn).to(["getUser"]),
+    allow.resource(postConfirmationFcn).to(["addUserToGroup"]),
+  ],
 });

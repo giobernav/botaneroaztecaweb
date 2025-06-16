@@ -4,6 +4,10 @@ import { type Schema } from "../../data/resource";
 import { Amplify } from "aws-amplify";
 import { generateClient } from "aws-amplify/data";
 import { getAmplifyDataClientConfig } from "@aws-amplify/backend/function/runtime";
+import {
+  CognitoIdentityProviderClient,
+  AdminAddUserToGroupCommand,
+} from "@aws-sdk/client-cognito-identity-provider";
 import { env } from "$amplify/env/post-confirmation";
 import dayjs from "dayjs";
 import { customAlphabet } from "nanoid";
@@ -35,6 +39,25 @@ export const handler: PostConfirmationTriggerHandler = async (event) => {
     );
 
     let passKitMemberId: string | undefined;
+
+    // Add user to group
+    const cognitoClient = new CognitoIdentityProviderClient({
+      region: event.region,
+    });
+    const addUserToGroupCommand = new AdminAddUserToGroupCommand({
+      Username: event.userName,
+      UserPoolId: event.userPoolId,
+      GroupName:
+        event.request.userAttributes.phone_number === env.DEFAULT_ADMIN_USER
+          ? "admin"
+          : env.DEFAULT_GROUP_NAME || "everyone",
+    });
+    await cognitoClient.send(addUserToGroupCommand);
+    console.log(
+      `User ${event.userName} added to group ${
+        env.DEFAULT_GROUP_NAME || "everyone"
+      }`
+    );
 
     // Enroll user in PassKit
     // if (env.PASSKIT_PROGRAM_ID) {
