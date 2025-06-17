@@ -163,7 +163,7 @@ const CustomerRewardsComp = ({ customerId }: { customerId?: string }) => {
               <ModalHeader className="flex flex-col gap-1">
                 Canjear recompensa
               </ModalHeader>
-              <ModalBody>
+              <ModalBody className="flex flex-col items-center gap-4 py-8">
                 <div className="w-56 h-56 bg-white p-2 flex items-center justify-center">
                   <QRCode
                     size={256}
