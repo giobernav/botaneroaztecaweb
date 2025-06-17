@@ -12,7 +12,7 @@ import { postConfirmationFcn } from "./auth/post-confirmation/resource";
 import { storage } from "./storage/resource";
 
 const backend = defineBackend({
-  auth,
+  // auth,
   data,
   cognitoGetUserFcn,
   dDBCustomerStreamFcn,
@@ -22,29 +22,29 @@ const backend = defineBackend({
   storage,
 });
 
-const { cfnResources } = backend.auth.resources;
-const { cfnUserPool, cfnUserPoolClient } = cfnResources;
+// const { cfnResources } = backend.auth.resources;
+// const { cfnUserPool, cfnUserPoolClient } = cfnResources;
 
-cfnUserPool.addPropertyOverride(
-  "Policies.SignInPolicy.AllowedFirstAuthFactors",
-  ["PASSWORD", "WEB_AUTHN", "EMAIL_OTP", "SMS_OTP"]
-);
+// cfnUserPool.addPropertyOverride(
+//   "Policies.SignInPolicy.AllowedFirstAuthFactors",
+//   ["PASSWORD", "WEB_AUTHN", "EMAIL_OTP", "SMS_OTP"]
+// );
 
-cfnUserPoolClient.explicitAuthFlows = [
-  "ALLOW_REFRESH_TOKEN_AUTH",
-  "ALLOW_USER_AUTH",
-];
+// cfnUserPoolClient.explicitAuthFlows = [
+//   "ALLOW_REFRESH_TOKEN_AUTH",
+//   "ALLOW_USER_AUTH",
+// ];
 
-cfnUserPool.policies = {
-  passwordPolicy: {
-    minimumLength: 6,
-  },
-};
+// cfnUserPool.policies = {
+//   passwordPolicy: {
+//     minimumLength: 6,
+//   },
+// };
 
-cfnUserPool.smsAuthenticationMessage = "Tu codigo de autenticacion es {####}";
-cfnUserPool.verificationMessageTemplate = {
-  smsMessage: "Tu codigo de verificacion de tu nueva cuenta es: {####}",
-};
+// cfnUserPool.smsAuthenticationMessage = "Tu codigo de autenticacion es {####}";
+// cfnUserPool.verificationMessageTemplate = {
+//   smsMessage: "Tu codigo de verificacion de tu nueva cuenta es: {####}",
+// };
 
 const customerTable = backend.data.resources.tables["Customer"];
 const policy = new Policy(
