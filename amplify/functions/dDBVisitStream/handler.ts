@@ -52,17 +52,17 @@ export const handler: DynamoDBStreamHandler = async (event) => {
         }
 
         // Añadir puntos obtenidos en la visita
-        if (newRecord.pointsEarned) {
+        if (newRecord?.pointsEarned?.value) {
           // Update tier points in PassKit
           logger.info(
-            `Earning points for customer ${newRecord.customerId}: ${newRecord.pointsEarned}`
+            `Earning points for customer ${newRecord.customerId}: ${newRecord.pointsEarned.value}`
           );
           // Call the function to earn points
           // This function should handle the API call to PassKit
           try {
             await earnPoints({
               memberId: retrievedCustomer.passKitMemberId as string,
-              points: newRecord.pointsEarned as number,
+              points: +newRecord.pointsEarned.value as number,
             });
           } catch (error) {
             logger.error(

@@ -219,19 +219,6 @@ export const groupBy = <T>(
     return acc;
   }, {} as { [key: string]: T[] });
 
-export function formatNumber(x: number) {
-  // convert it to a string
-  var s = "" + x;
-  // if x is integer, the point is missing, so add it
-  if (s.indexOf(".") == -1) {
-    s += ".";
-  }
-  // make sure if we have at least 2 decimals
-  s += "00";
-  // get the first 2 decimals
-  return s.substring(0, s.indexOf(".") + 3);
-}
-
 export const handleRewards = async (customerId: string) => {
   // Consultar ultimas Visits del Customer en 180 días
   const lastVisits = await getLastVisits(customerId as string);
@@ -258,7 +245,7 @@ export const handleRewards = async (customerId: string) => {
   console.log("sortedAvailableRewards", sortedAvailableRewards);
 
   for (const availableReward of sortedAvailableRewards) {
-    const qty = +formatNumber(
+    const qty = Math.floor(
       pointsEarned / (availableReward?.pointsRequired || 0) -
         (groupedCustomerRewards?.[availableReward.id]?.length || 0)
     );
@@ -439,7 +426,7 @@ export async function setPoints({
     throw new Error("PASSKIT_API_URL environment variable is not set");
   }
 
-  if (!memberId || !points) {
+  if (!memberId || points >= 0) {
     throw new Error("Member ID and Points are required");
   }
 

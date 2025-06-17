@@ -140,8 +140,12 @@ export default function FormComp() {
             paused={!isActive}
           />
           {customerId ? (
-            <div className="absolute inset-0 flex items-center justify-center bg-lime-500 bg-opacity-60">
-              <Icon icon="lucide:circle-check" className="w-32 h-32" />
+            <div className="absolute inset-0 flex items-center justify-center bg-lime-500 text-lime-100 bg-opacity-60">
+              <Icon
+                icon="lucide:circle-check"
+                className="w-32 h-32"
+                color="currentColor"
+              />
             </div>
           ) : null}
         </div>
