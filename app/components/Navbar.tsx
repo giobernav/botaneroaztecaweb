@@ -102,6 +102,9 @@ function TopNavbar() {
 
     if (user) {
       fetchSession();
+    } else {
+      setIsLoading(false);
+      setUserGroups([]);
     }
   }, [user]);
 
@@ -235,9 +238,12 @@ function TopNavbar() {
             )}
           </NavbarMenuItem>
         ))}
-        <NavbarMenuItem>
-          {isLoading ? <Skeleton className="w-48 h-8 rounded-lg" /> : null}
-        </NavbarMenuItem>
+
+        {isLoading ? (
+          <NavbarMenuItem>
+            <Skeleton className="w-48 h-8 rounded-lg" />
+          </NavbarMenuItem>
+        ) : null}
       </NavbarMenu>
     </Navbar>
   );
