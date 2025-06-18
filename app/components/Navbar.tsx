@@ -67,12 +67,6 @@ function TopNavbar() {
   const [isLoading, setIsLoading] = useState(true);
   const [userGroups, setUserGroups] = useState<string[]>([]);
 
-  // Initialize the state based on the user object
-  useEffect(() => {
-    // Check if the user is authenticated on initial load
-    setIsAuthenticated(!!user);
-  }, [user]);
-
   useEffect(() => {
     // Close the menu when the pathname or hash changes
     setIsMenuOpen(false);
@@ -95,11 +89,7 @@ function TopNavbar() {
       }
     }
 
-    // Close the menu when the user logs out
-    if (!user) {
-      setIsMenuOpen(false);
-    }
-
+    setIsAuthenticated(!!user);
     if (user) {
       fetchSession();
     } else {
