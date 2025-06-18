@@ -131,7 +131,9 @@ const RewardsComp = ({
                   </div>
                   <Button size="sm" color="default" isDisabled>
                     Necesitas{" "}
-                    {(reward?.pointsRequired || 0) - (userPoints || 0)} más
+                    {(reward?.pointsRequired || 0) -
+                      ((userPoints || 0) % (reward?.pointsRequired || 0))}{" "}
+                    más
                   </Button>
                 </CardFooter>
               </Card>

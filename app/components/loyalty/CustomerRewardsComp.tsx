@@ -82,7 +82,7 @@ const CustomerRewardsComp = ({ customerId }: { customerId?: string }) => {
 
   return (
     <div>
-      <h3 className="text-lg font-semibold mb-3">Recompensas disponibles</h3>
+      <h3 className="text-lg font-semibold mb-3">Recompensas obtenidas</h3>
       {availableRewards?.length === 0 ? (
         <Card>
           <CardBody className="flex flex-col items-center py-8 gap-2">
