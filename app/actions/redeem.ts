@@ -1,6 +1,9 @@
 "use server";
 
-import { cookiesClient } from "@/app/utils/amplify-utils";
+import {
+  AuthGetCurrentUserServer,
+  cookiesClient,
+} from "@/app/utils/amplify-utils";
 
 import {
   RedeemActionState,
@@ -42,6 +45,8 @@ export async function redeemReward(
   }
 
   let cusRew;
+  const loggedInUser = await AuthGetCurrentUserServer();
+  // console.log("loggedInUser", loggedInUser);
 
   if (customerRewardId) {
     // Check if the customerRewardId is valid
@@ -90,26 +95,29 @@ export async function redeemReward(
 
     do {
       //   retrieve customer reward by customerId and rewardId
-      const { data: customerReward, nextToken } =
-        await cookiesClient.models.CustomerReward.listCusRewByCustomer(
-          {
-            customerId,
-          },
-          {
-            authMode: "userPool",
-            filter: {
-              rewardId: {
-                contains: rawFormData?.rewardId,
-              },
-              status: {
-                eq: "ACTIVE",
-              },
-              expiryDate: {
-                ge: new Date().toISOString(), // Ensure the reward is not expired
-              },
+      const {
+        data: customerReward,
+        errors,
+        nextToken,
+      } = await cookiesClient.models.CustomerReward.listCusRewByCustomer(
+        {
+          customerId,
+        },
+        {
+          authMode: "userPool",
+          filter: {
+            id: {
+              contains: rawFormData?.rewardId,
             },
-          }
-        );
+            // status: {
+            //   eq: "ACTIVE",
+            // },
+            // expiryDate: {
+            //   ge: new Date().toISOString(), // Ensure the reward is not expired
+            // },
+          },
+        }
+      );
       cr = customerReward?.[0];
       nt = nextToken;
 
@@ -164,13 +172,16 @@ export async function redeemReward(
     console.log(`Reward ${customerRewardId} has expired.`);
   }
 
+  // Update the customer reward status to REDEEMED
   await cookiesClient.models.CustomerReward.update(
     {
       id: cusRew.id,
       status: "REDEEMED",
+      redeemedBy: loggedInUser?.userId,
     },
     { authMode: "userPool" }
   );
+  console.log(`Reward ${cusRew.id} redeemed by user ${loggedInUser?.userId}.`);
 
   // Here you would implement the logic to redeem the reward
   // For example, updating the user's points, sending a confirmation, etc.

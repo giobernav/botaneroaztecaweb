@@ -69,6 +69,7 @@ const schema = a
         customerId: a.id().required(),
         customer: a.belongsTo("Customer", "customerId"),
         entryType: a.enum(["QR", "MANUAL", "TRIGGER"]),
+        registeredBy: a.string(), // user who registered the visit
       })
       .secondaryIndexes((index) => [
         index("customerId")
@@ -76,6 +77,7 @@ const schema = a
           .queryField("listVisitByCustomer"),
       ])
       .authorization((allow) => [
+        allow.ownerDefinedIn("registeredBy").to(["read", "update"]),
         allow.authenticated("identityPool").to(["read"]),
         allow.authenticated("userPools").to(["read"]),
         allow
@@ -93,6 +95,7 @@ const schema = a
         type: a.enum(["RECURRENT", "ONCE"]),
         category: a.string(), // BIRTHDAY, REVIEW, PROFILE, COUPON
         createdAt: a.datetime(),
+        redeemedBy: a.string(), // user who redeemed the reward
       })
       .secondaryIndexes((index) => [
         index("customerId")
