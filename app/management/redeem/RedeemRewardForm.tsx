@@ -109,7 +109,7 @@ export function RedeemRewardForm() {
 
       {isQRMode ? (
         <div className="space-y-4 w-full">
-          <div className="w-64 h-64 mx-auto">
+          <div className="relative w-64 h-64 mx-auto">
             <Scanner
               onScan={onScan}
               onError={(error: any) => {
@@ -117,6 +117,15 @@ export function RedeemRewardForm() {
               }}
               paused={!isActive}
             />
+            {rewardId ? (
+              <div className="absolute inset-0 flex items-center justify-center bg-lime-500 text-lime-100 bg-opacity-60">
+                <Icon
+                  icon="lucide:circle-check"
+                  className="w-32 h-32"
+                  color="currentColor"
+                />
+              </div>
+            ) : null}
           </div>
         </div>
       ) : (
@@ -149,6 +158,17 @@ export function RedeemRewardForm() {
           />
         </div>
       )}
+
+      {state?.errors?.map((message: string, idx) => {
+        return (
+          <Alert
+            key={`error_${idx}`}
+            color="danger"
+            title="Error"
+            description={message}
+          />
+        );
+      })}
 
       {state.success ? (
         <Alert

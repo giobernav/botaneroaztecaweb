@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import clsx from "clsx";
 
 import QRCode from "react-qr-code";
 import { Card, CardBody, CardFooter } from "@heroui/card";
@@ -48,6 +49,11 @@ const CustomerRewardsComp = ({ customerId }: { customerId?: string }) => {
   const [rewardId, setRewardId] = useState<string>();
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
+  const selectedReward = useMemo(
+    () => availableRewards?.find((reward) => reward.id === rewardId),
+    [availableRewards, rewardId]
+  );
+
   useEffect(() => {
     const fetch = async () => {
       const { data: cusRewards } =
@@ -92,19 +98,51 @@ const CustomerRewardsComp = ({ customerId }: { customerId?: string }) => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {availableRewards?.map((reward) => (
-            <Card key={reward.id} className="overflow-hidden">
+            <Card
+              key={reward.id}
+              className={clsx("overflow-hidden", {
+                "opacity-50":
+                  reward.status === "REDEEMED" || reward.status === "EXPIRED",
+              })}
+            >
               <CardBody className="p-0">
-                <img
-                  src={
-                    reward.reward.image || reward.category === "WELCOME"
-                      ? "/welcome_reward.png"
-                      : reward.category === "PROFILLE"
-                      ? "/profile_reward.png"
-                      : "/reward.png"
-                  }
-                  alt={reward.reward.title || undefined}
-                  className="w-full h-44 object-cover"
-                />
+                <div className="relative">
+                  <img
+                    src={
+                      reward.reward.image || reward.category === "WELCOME"
+                        ? "/welcome_reward.png"
+                        : reward.category === "PROFILLE"
+                        ? "/profile_reward.png"
+                        : "/reward.png"
+                    }
+                    alt={reward.reward.title || undefined}
+                    className="w-full h-44 object-cover"
+                  />
+                  <div
+                    className={clsx(
+                      "absolute inset-0 flex items-center justify-center",
+                      {
+                        "bg-black/30":
+                          reward.status === "REDEEMED" ||
+                          reward.status === "EXPIRED",
+                      }
+                    )}
+                  >
+                    <Icon
+                      icon="lucide:check-circle"
+                      className={clsx("text-white", {
+                        block:
+                          reward.status === "REDEEMED" ||
+                          reward.status === "EXPIRED",
+                        hidden:
+                          reward.status !== "REDEEMED" &&
+                          reward.status !== "EXPIRED",
+                      })}
+                      width={64}
+                      height={64}
+                    />
+                  </div>
+                </div>
                 <div className="p-4">
                   <div className="flex justify-between items-start">
                     <h4 className="font-semibold">{reward.reward.title}</h4>
@@ -131,7 +169,8 @@ const CustomerRewardsComp = ({ customerId }: { customerId?: string }) => {
                     </>
                   ) : null}
                 </div>
-                {reward.category === "COUPON" ? (
+                {reward.category === "COUPON" &&
+                reward.status !== "REDEEMED" ? (
                   <Button
                     size="sm"
                     color="primary"
@@ -164,7 +203,7 @@ const CustomerRewardsComp = ({ customerId }: { customerId?: string }) => {
                 Canjear recompensa
               </ModalHeader>
               <ModalBody className="flex flex-col items-center gap-4 py-8">
-                <div className="w-56 h-56 bg-white p-2 flex items-center justify-center">
+                <div className="w-56 h-56 bg-white p-2 flex flex-col items-center justify-center space-y-2">
                   <QRCode
                     size={256}
                     style={{ height: "auto", maxWidth: "100%", width: "100%" }}
@@ -172,6 +211,14 @@ const CustomerRewardsComp = ({ customerId }: { customerId?: string }) => {
                     viewBox={`0 0 256 256`}
                     level="Q"
                   />
+                  <div>
+                    <div className="text-center">
+                      {selectedReward?.reward.title}
+                    </div>
+                    <div className="text-center text-xs text-default-500 text-ellipsis">
+                      {selectedReward?.id}
+                    </div>
+                  </div>
                 </div>
               </ModalBody>
               <ModalFooter>
