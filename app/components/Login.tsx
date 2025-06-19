@@ -190,7 +190,7 @@ function Login({ nextUrl }: { nextUrl?: string }) {
   const handleSubmit = page === 0 ? handlePhoneSubmit : handlePasswordSubmit;
 
   return (
-    <div className="relative flex-1 flex flex-col w-full items-start overflow-x-auto overflow-y-auto transition-colors duration-200 p-4 justify-center">
+    <div className="relative min-h-[calc(100vh-64px)] flex-1 flex flex-col w-full items-start overflow-x-auto overflow-y-auto transition-colors duration-200 p-4 justify-center">
       <div className="flex flex-col h-full w-full items-center justify-center">
         <div className="flex flex-col items-center pb-6">
           <p className="text-xl font-medium">Bienvenido de nuevo</p>

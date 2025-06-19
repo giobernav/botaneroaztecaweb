@@ -65,9 +65,9 @@ export default function RootLayout({
             <div className="min-h-screen flex flex-col">
               <TopNavbar />
               {children}
+              <Footer />
             </div>
           </div>
-          <Footer />
         </Providers>
       </body>
     </html>
