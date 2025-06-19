@@ -22,6 +22,7 @@ import { Hub } from "aws-amplify/utils";
 import { fetchAuthSession } from "aws-amplify/auth";
 import type { AuthSession } from "aws-amplify/auth";
 import { Skeleton } from "@heroui/skeleton";
+import { signOut } from "aws-amplify/auth";
 
 const menuItems = [
   { id: "home", label: "Inicio", path: "/" },
@@ -62,7 +63,7 @@ function TopNavbar() {
   const hash = useHash();
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { user, signOut } = useAuthenticator((context) => [context.user]);
+  const { user } = useAuthenticator((context) => [context.user]);
   const [isAuthenticated, setIsAuthenticated] = useState(!!user);
   const [isLoading, setIsLoading] = useState(true);
   const [userGroups, setUserGroups] = useState<string[]>([]);
