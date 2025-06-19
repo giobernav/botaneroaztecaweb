@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     description:
       "Tapas y restaurante tradicional mexicano en el corazón de Valdebebas.",
     url: "https://www.botaneroazteca.es",
-    siteName: "Next.js",
+    siteName: "Botanero Azteca",
     images: [
       {
         url: "https://www.botaneroazteca.es/og.png", // Must be an absolute URL
