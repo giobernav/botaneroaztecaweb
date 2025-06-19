@@ -18,9 +18,30 @@ export const metadata: Metadata = {
     "Botanero Azteca | Un rincón tradicional de México en Valdebebas, Madrid.",
   description:
     "Tapas y restaurante tradicional mexicano en el corazón de Valdebebas.",
+  openGraph: {
+    title:
+      "Botanero Azteca | Un rincón tradicional de México en Valdebebas, Madrid.",
+    description:
+      "Tapas y restaurante tradicional mexicano en el corazón de Valdebebas.",
+    url: "https://www.botaneroazteca.es",
+    siteName: "Next.js",
+    images: [
+      {
+        url: "https://www.botaneroazteca.es/og.png", // Must be an absolute URL
+        width: 800,
+        height: 600,
+      },
+    ],
+    locale: "es_ES",
+    type: "website",
+  },
+  alternates: {
+    canonical: "/",
+  },
 };
 
 export const viewport: Viewport = {
+  themeColor: "#3A86FF",
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
