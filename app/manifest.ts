@@ -4,7 +4,7 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: "Botanero Azteca",
     short_name: "B Azteca",
-    description: "El autentico sabor de México en Valdebebas, Madrid",
+    description: "El autentico sabor de México en Madrid",
     start_url: "https://www.botaneroazteca.es/?utm_source=web_app_manifest",
     display: "standalone",
     background_color: "#fff",

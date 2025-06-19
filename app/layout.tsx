@@ -14,13 +14,12 @@ import { Footer } from "./components/footer";
 import Scroll from "./components/Scroll";
 
 export const metadata: Metadata = {
-  title:
-    "Botanero Azteca | Un rincón tradicional de México en Valdebebas, Madrid.",
+  metadataBase: new URL("https://www.botaneroazteca.es"),
+  title: "Botanero Azteca | Un rincón tradicional de México en  Madrid",
   description:
     "Tapas y restaurante tradicional mexicano en el corazón de Valdebebas.",
   openGraph: {
-    title:
-      "Botanero Azteca | Un rincón tradicional de México en Valdebebas, Madrid.",
+    title: "Botanero Azteca | Un rincón tradicional de México en Madrid",
     description:
       "Tapas y restaurante tradicional mexicano en el corazón de Valdebebas.",
     url: "https://www.botaneroazteca.es",
