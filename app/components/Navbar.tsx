@@ -128,6 +128,7 @@ function TopNavbar() {
       maxWidth="xl"
       isMenuOpen={isMenuOpen}
       onMenuOpenChange={setIsMenuOpen}
+      shouldHideOnScroll
     >
       <NavbarContent>
         <NavbarMenuToggle
