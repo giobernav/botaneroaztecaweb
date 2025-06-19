@@ -65,7 +65,7 @@ export const handler: DynamoDBStreamHandler = async (event) => {
               points: +newRecord.pointsEarned.value as number,
             });
           } catch (error) {
-            logger.error(
+            console.log(
               `Error earning points for customer ${newRecord.customerId}: ${error}`
             );
           }

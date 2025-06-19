@@ -139,37 +139,50 @@ function Login({ nextUrl }: { nextUrl?: string }) {
     setPending(true);
 
     if (authFlow === "signIn") {
-      // prompt user for otp code delivered via SMS
-      const { nextStep: confirmSignInNextStep } = await confirmSignIn({
-        challengeResponse: password,
-      });
+      try {
+        // prompt user for otp code delivered via SMS
+        const { nextStep: confirmSignInNextStep } = await confirmSignIn({
+          challengeResponse: password,
+        });
 
-      if (confirmSignInNextStep.signInStep === "DONE") {
-        console.log("Sign in successful!");
-        return router.push(nextUrl || "/loyalty");
-      }
-    } else {
-      const { nextStep: confirmSignUpNextStep } = await confirmSignUp({
-        username: phone!,
-        confirmationCode: password,
-      });
-      console.log("confirmSignUpNextStep", confirmSignUpNextStep);
-
-      if (confirmSignUpNextStep.signUpStep === "COMPLETE_AUTO_SIGN_IN") {
-        // Call `autoSignIn` API to complete the flow
-        const { nextStep } = await autoSignIn();
-        console.log("autoSignIn nextStep", nextStep);
-        // If the next step is DONE, the user is signed in
-
-        if (nextStep.signInStep === "DONE") {
-          console.log("Successfully signed in.");
+        if (confirmSignInNextStep.signInStep === "DONE") {
+          console.log("Sign in successful!");
           return router.push(nextUrl || "/loyalty");
         }
-      } else if (confirmSignUpNextStep.signUpStep === "DONE") {
+      } catch (error) {
+        console.error("Error during sign in:", error);
+        setPending(false);
+        return;
+      }
+    } else {
+      try {
+        const { nextStep: confirmSignUpNextStep } = await confirmSignUp({
+          username: phone!,
+          confirmationCode: password,
+        });
+        console.log("confirmSignUpNextStep", confirmSignUpNextStep);
+
+        if (confirmSignUpNextStep.signUpStep === "COMPLETE_AUTO_SIGN_IN") {
+          // Call `autoSignIn` API to complete the flow
+          const { nextStep } = await autoSignIn();
+          console.log("autoSignIn nextStep", nextStep);
+          // If the next step is DONE, the user is signed in
+
+          if (nextStep.signInStep === "DONE") {
+            console.log("Successfully signed in.");
+            return router.push(nextUrl || "/loyalty");
+          }
+        } else if (confirmSignUpNextStep.signUpStep === "DONE") {
+          setPending(false);
+          paginate(0);
+          console.log(`SignUp Complete`);
+          return router.push(nextUrl || "/loyalty");
+        }
+      } catch (error) {
+        console.error("Error during sign up:", error);
         setPending(false);
         paginate(0);
-        console.log(`SignUp Complete`);
-        return router.push(nextUrl || "/loyalty");
+        return;
       }
     }
   };
@@ -284,6 +297,7 @@ function Login({ nextUrl }: { nextUrl?: string }) {
                     }}
                     fullWidth
                     inputMode="numeric"
+                    autoComplete="one-time-code"
                   />
                 )}
 

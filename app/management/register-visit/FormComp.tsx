@@ -163,8 +163,8 @@ export default function FormComp() {
         formatOptions={{
           style: "currency",
           currency: "EUR",
-          currencyDisplay: "code",
-          currencySign: "accounting",
+          // currencyDisplay: "code",
+          // currencySign: "accounting",
         }}
         min={0}
         name="billAmount"

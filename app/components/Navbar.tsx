@@ -73,6 +73,10 @@ function TopNavbar() {
   }, [pathname, hash]);
 
   useEffect(() => {
+    setIsAuthenticated(!!user);
+  }, [user]);
+
+  useEffect(() => {
     async function fetchSession() {
       try {
         setIsLoading(true);
@@ -90,13 +94,13 @@ function TopNavbar() {
     }
 
     setIsAuthenticated(!!user);
-    if (user) {
+    if (isAuthenticated) {
       fetchSession();
     } else {
       setIsLoading(false);
       setUserGroups([]);
     }
-  }, [user]);
+  }, [isAuthenticated]);
 
   useEffect(() => {
     // Listen for sign out events

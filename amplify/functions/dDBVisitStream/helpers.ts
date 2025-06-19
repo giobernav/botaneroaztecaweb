@@ -394,6 +394,7 @@ export async function earnPoints({
         Authorization: token,
       },
     });
+    console.log("Earned Points Response:", response);
 
     if (!response.ok) {
       throw new Error(`Response status: ${response.status}`);
