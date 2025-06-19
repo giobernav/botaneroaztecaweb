@@ -116,6 +116,8 @@ function Login({ nextUrl }: { nextUrl?: string }) {
 
         if (signUpNextStep.signUpStep === "DONE") {
           console.log(`SignUp Complete`);
+          setPending(false);
+          paginate(0);
         }
 
         if (signUpNextStep.signUpStep === "CONFIRM_SIGN_UP") {
@@ -144,29 +146,30 @@ function Login({ nextUrl }: { nextUrl?: string }) {
 
       if (confirmSignInNextStep.signInStep === "DONE") {
         console.log("Sign in successful!");
-        router.push(nextUrl || "/loyalty");
+        return router.push(nextUrl || "/loyalty");
       }
     } else {
       const { nextStep: confirmSignUpNextStep } = await confirmSignUp({
         username: phone!,
         confirmationCode: password,
       });
+      console.log("confirmSignUpNextStep", confirmSignUpNextStep);
 
       if (confirmSignUpNextStep.signUpStep === "COMPLETE_AUTO_SIGN_IN") {
         // Call `autoSignIn` API to complete the flow
         const { nextStep } = await autoSignIn();
+        console.log("autoSignIn nextStep", nextStep);
+        // If the next step is DONE, the user is signed in
 
         if (nextStep.signInStep === "DONE") {
           console.log("Successfully signed in.");
-          router.push(nextUrl || "/loyalty");
+          return router.push(nextUrl || "/loyalty");
         }
-      }
-
-      if (confirmSignUpNextStep.signUpStep === "DONE") {
+      } else if (confirmSignUpNextStep.signUpStep === "DONE") {
         setPending(false);
         paginate(0);
         console.log(`SignUp Complete`);
-        router.push(nextUrl || "/loyalty");
+        return router.push(nextUrl || "/loyalty");
       }
     }
   };
