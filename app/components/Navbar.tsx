@@ -221,9 +221,9 @@ function TopNavbar() {
                 size="lg"
                 onPress={
                   item.id === "logout"
-                    ? () => {
+                    ? async () => {
                         if (signOut) {
-                          signOut();
+                          await signOut();
                         }
                       }
                     : undefined
