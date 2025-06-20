@@ -207,7 +207,8 @@ const CustomerRewardsComp = ({ customerId }: { customerId?: string }) => {
                   <QRCode
                     size={256}
                     style={{ height: "auto", maxWidth: "100%", width: "100%" }}
-                    value={`https://botaneroazteca.es/redeem?mode=qr&company=botaneroazteca&branch=valdebebas&rewid=${rewardId}`}
+                    // value={`https://botaneroazteca.es/redeem?mode=qr&company=botaneroazteca&branch=valdebebas&rewid=${rewardId}`}
+                    value={`${rewardId}`}
                     viewBox={`0 0 256 256`}
                     level="Q"
                   />

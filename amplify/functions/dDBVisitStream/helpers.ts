@@ -387,7 +387,7 @@ export async function earnPoints({
 
   try {
     const response = await fetch(url, {
-      method: "POST",
+      method: "PUT",
       body: JSON.stringify({ id: memberId, tierPoints: points, tierId }),
       headers: {
         "Content-Type": "application/json",
@@ -446,7 +446,7 @@ export async function setPoints({
 
   try {
     const response = await fetch(url, {
-      method: "POST",
+      method: "PUT",
       body: JSON.stringify({
         id: memberId,
         tierPoints: points,

@@ -59,7 +59,8 @@ export default function CustomerQr({ customerId }: { customerId: string }) {
         <QRCode
           size={256}
           style={{ height: "auto", maxWidth: "100%", width: "100%" }}
-          value={`https://botaneroazteca.es/verify?mode=qr&company=botaneroazteca&branch=valdebebas&cusid=${customerId}`}
+          // value={`https://botaneroazteca.es/verify?mode=qr&company=botaneroazteca&branch=valdebebas&cusid=${customerId}`}
+          value={`${customerId}`}
           viewBox={`0 0 256 256`}
           level="Q"
         />

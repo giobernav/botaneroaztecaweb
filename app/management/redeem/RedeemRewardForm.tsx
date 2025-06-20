@@ -38,31 +38,32 @@ export function RedeemRewardForm() {
     setIsActive(false);
 
     if (scan?.[0]?.rawValue) {
-      const scannedURL = new URL(scan?.[0]?.rawValue);
-      console.log("scannedURL", scannedURL);
-      const mode = scannedURL.searchParams.get("mode");
+      // const scannedValue = new URL(scan?.[0]?.rawValue);
+      // console.log("scannedValue", scannedValue);
+      // const mode = scannedURL.searchParams.get("mode");
 
-      if (scannedURL.hostname === "botaneroazteca.es" && mode === "qr") {
-        // const token = scannedURL.searchParams.get("token");
-        const rewardId = scannedURL.searchParams.get("rewid");
+      // if (scannedURL.hostname === "botaneroazteca.es" && mode === "qr") {
+      // const token = scannedURL.searchParams.get("token");
+      // const rewardId = scannedURL.searchParams.get("rewid");
+      const rewardId = scan?.[0]?.rawValue;
 
-        // console.log("token", token);
-        console.log("rewardId", rewardId);
+      // console.log("token", token);
+      console.log("rewardId", rewardId);
 
-        if (rewardId) {
-          // SET customerId & token state
-          setRewardId(rewardId);
-          // setToken(token);
-        } else {
-          setRewardId(undefined);
-          // setToken(undefined);
-          setState({
-            success: false,
-            errors: ["Token no válido, escanea el código nuevamente"],
-          });
-          setIsActive(true);
-        }
+      if (rewardId) {
+        // SET customerId & token state
+        setRewardId(rewardId);
+        // setToken(token);
+      } else {
+        setRewardId(undefined);
+        // setToken(undefined);
+        setState({
+          success: false,
+          errors: ["Token no válido, escanea el código nuevamente"],
+        });
+        setIsActive(true);
       }
+      // }
     }
   };
 

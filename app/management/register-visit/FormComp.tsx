@@ -43,30 +43,31 @@ export default function FormComp() {
     setIsActive(false);
 
     if (scan?.[0]?.rawValue) {
-      const scannedURL = new URL(scan?.[0]?.rawValue);
-      const mode = scannedURL.searchParams.get("mode");
+      // const scannedURL = new URL(scan?.[0]?.rawValue);
+      // const mode = scannedURL.searchParams.get("mode");
 
-      if (scannedURL.hostname === "botaneroazteca.es" && mode === "qr") {
-        // const token = scannedURL.searchParams.get("token");
-        const customerId = scannedURL.searchParams.get("cusid");
+      // if (scannedURL.hostname === "botaneroazteca.es" && mode === "qr") {
+      // const token = scannedURL.searchParams.get("token");
+      // const customerId = scannedURL.searchParams.get("cusid");
+      const customerId = scan?.[0]?.rawValue;
 
-        // console.log("token", token);
-        console.log("customerId", customerId);
+      // console.log("token", token);
+      console.log("customerId", customerId);
 
-        if (customerId) {
-          // SET customerId & token state
-          setCustomerId(customerId);
-          // setToken(token);
-        } else {
-          setCustomerId(undefined);
-          // setToken(undefined);
-          setState({
-            success: false,
-            errors: ["Token no válido, escanea el código nuevamente"],
-          });
-          setIsActive(true);
-        }
+      if (customerId) {
+        // SET customerId & token state
+        setCustomerId(customerId);
+        // setToken(token);
+      } else {
+        setCustomerId(undefined);
+        // setToken(undefined);
+        setState({
+          success: false,
+          errors: ["Token no válido, escanea el código nuevamente"],
+        });
+        setIsActive(true);
       }
+      // }
     }
   };
 
