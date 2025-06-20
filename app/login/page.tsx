@@ -12,6 +12,7 @@ export default async function LoginPage(props: {
   const searchParams = await props.searchParams;
   const next_url = searchParams.next_url;
   const user = await AuthGetCurrentUserServer();
+  console.log("LoginPage user:", user);
 
   return !user ? (
     <Login nextUrl={next_url} />

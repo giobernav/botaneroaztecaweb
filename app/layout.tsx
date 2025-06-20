@@ -11,7 +11,7 @@ const montserrat = Montserrat({ subsets: ["latin"] });
 import ConfigureAmplifyClientSide from "@/app/components/ConfigureAmplify";
 import TopNavbar from "./components/Navbar";
 import { Footer } from "./components/footer";
-// import Scroll from "./components/Scroll";
+import Scroll from "./components/Scroll";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.botaneroazteca.es"),
@@ -56,7 +56,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="es" suppressHydrationWarning>
-      {/* <Scroll /> */}
+      <Scroll />
       <body className={montserrat.className}>
         <ConfigureAmplifyClientSide />
         <NextTopLoader color="#dc2626" />

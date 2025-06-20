@@ -2,9 +2,7 @@
 
 import { Divider } from "@heroui/divider";
 import { Image } from "@heroui/image";
-import { Footer } from "./components/footer";
 import { Header } from "./components/header";
-import { useState } from "react";
 import { MenuSection } from "./components/menu-section";
 import { SpecialsSection } from "./components/specials-section";
 import { ReservationSection } from "./components/reservation-section";

@@ -74,7 +74,10 @@ function TopNavbar() {
   }, [pathname, hash]);
 
   useEffect(() => {
-    setIsAuthenticated(!!user);
+    if (user) {
+      console.log("User authenticated:", user);
+      setIsAuthenticated(!!user);
+    }
   }, [user]);
 
   useEffect(() => {
@@ -83,9 +86,9 @@ function TopNavbar() {
         setIsLoading(true);
         // Check if the user is authenticated
         const session = await fetchAuthSession();
-        const userGroups = handleUserGroups(session);
+        const ug = handleUserGroups(session);
         // console.log("Client side user groups:", userGroups);
-        setUserGroups(userGroups);
+        setUserGroups(ug);
       } catch (error) {
         console.error("Error fetching session:", error);
         setUserGroups([]);
@@ -94,7 +97,6 @@ function TopNavbar() {
       }
     }
 
-    setIsAuthenticated(!!user);
     if (isAuthenticated) {
       fetchSession();
     } else {
@@ -110,11 +112,13 @@ function TopNavbar() {
       console.log("Auth data:", data);
       if (event === "signedIn") {
         setIsAuthenticated(true);
+        router.refresh();
       }
       if (event === "signedOut") {
         setIsAuthenticated(false);
         setIsMenuOpen(false);
         router.push("/login");
+        router.refresh();
       }
     });
 

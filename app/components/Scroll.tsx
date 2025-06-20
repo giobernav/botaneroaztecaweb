@@ -10,13 +10,17 @@ export default function Scroll() {
 
   const pathname = usePathname();
   useEffect(() => {
-    if (typeof window === "undefined") {
+    // Scroll to the top of the page when the pathname changes
+    console.log("Scroll to top on pathname change:", pathname);
+    // Use window.scroll to scroll to the top smoothly
+    if (window.scrollY === 0) {
+      return; // No need to scroll if already at the top
+    }
+    // Scroll to the top of the page
+    if (pathname !== "/") {
+      window.scroll({ top: 0, behavior: "smooth" });
       return;
     }
-    // Scroll to the top of the page when the pathname changes
-    // console.log("Scroll to top on pathname change:", pathname);
-    // Use window.scroll to scroll to the top smoothly
-    window.scroll({ top: 0, behavior: "smooth" });
   }, [pathname]);
   return <></>;
 }
