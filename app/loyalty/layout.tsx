@@ -21,7 +21,7 @@ export default async function LoyaltyLayout({
   const company = await getCompany(process.env.NEXT_PUBLIC_DEFAULT_COMPANY);
 
   // const tiers = await listTiers(
-  //   process.env.NEXT_PUBLIC_PASSKIT_PROGRAM_ID || ""
+  //   company?.passKitProgramId || process.env.NEXT_PUBLIC_PASSKIT_PROGRAM_ID || ""
   // );
   // console.log("Pass Kit Tiers:", tiers);
 

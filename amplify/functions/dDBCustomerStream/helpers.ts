@@ -123,7 +123,7 @@ export async function handleEnrollMember(customer: CustomerSS) {
     // Enrollar en PassKit
     const { data: passkitMember } = await enrollMember({
       externalId: customer.id,
-      programId: env.PASSKIT_PROGRAM_ID,
+      programId: company?.passKitProgramId || env.PASSKIT_PROGRAM_ID,
       tierId: sortedTierLevels[0]?.id || "base",
       status: "ACTIVE", // "ACTIVE", "DELETED", "EXPIRED", "ENROLLED"
       person: {
