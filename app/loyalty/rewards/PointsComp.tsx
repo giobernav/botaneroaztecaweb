@@ -1,5 +1,6 @@
 "use client";
 import { Progress } from "@heroui/progress";
+import TiersInfo from "./TiersInfo";
 
 const PointsComp = ({
   userPoints,
@@ -28,6 +29,7 @@ const PointsComp = ({
         {hasNextTier
           ? `Gana ${nextTierPoints} puntos más para subir de nivel`
           : `Gana ${nextTierPoints} puntos para mantener tu nivel`}
+        <TiersInfo />
       </p>
     </div>
   );

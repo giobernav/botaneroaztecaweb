@@ -114,17 +114,28 @@ export const Footer = () => {
                 </a>
               </li>
               <li>
-                <a
+                <Link
                   href="/loyalty"
-                  className="hover:text-amber-500 transition-colors"
+                  className="text-default-400 hover:text-amber-500 transition-colors"
                 >
                   Programa de lealtad
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="hover:text-amber-500 transition-colors">
-                  Eventos privados
-                </a>
+                <Link
+                  href="/legal"
+                  className="text-default-400 hover:text-amber-500 transition-colors"
+                >
+                  Aviso legal y política de privacidad
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/terminos/programa-lealtad"
+                  className="text-default-400 hover:text-amber-500 transition-colors"
+                >
+                  Términos y condiciones del programa de lealtad
+                </Link>
               </li>
             </ul>
           </div>
