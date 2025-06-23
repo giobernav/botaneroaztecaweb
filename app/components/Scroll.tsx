@@ -9,6 +9,7 @@ export default function Scroll() {
   // this useEffect is a workaround to 'fix' that behavior.
 
   const pathname = usePathname();
+
   useEffect(() => {
     // Scroll to the top of the page when the pathname changes
     // console.log("Scroll to top on pathname change:", pathname);
@@ -17,10 +18,8 @@ export default function Scroll() {
       return; // No need to scroll if already at the top
     }
     // Scroll to the top of the page
-    if (pathname === "/login") {
-      window.scroll({ top: 0, behavior: "smooth" });
-      return;
-    }
+    window.scroll({ top: 0, behavior: "smooth" });
+    return;
   }, [pathname]);
   return <></>;
 }

@@ -32,7 +32,7 @@ export function ProfileHeader({
   neededPoints = 0,
 }: ProfileHeaderProps) {
   return (
-    <div className="flex flex-col md:flex-row items-center md:items-start gap-4 p-4 bg-content1 rounded-lg mb-6">
+    <div className="flex flex-col  items-center md:items-start gap-4 p-4 bg-content1 rounded-lg mb-6">
       <Avatar
         src={avatarUrl}
         className="w-20 h-20"

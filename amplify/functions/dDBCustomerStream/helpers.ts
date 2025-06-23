@@ -39,6 +39,7 @@ interface Member {
   tierId: string;
   status?: string; // e.g., "ACTIVE", "DELETED", "EXPIRED", "ENROLLED"
   person: Person;
+  tierPoints?: number; // Optional points to assign to the member
 }
 
 const { resourceConfig, libraryOptions } = await getAmplifyDataClientConfig(
@@ -56,6 +57,7 @@ export async function enrollMember({
   externalId,
   status,
   person,
+  tierPoints = 0, // Optional points to assign to the member
 }: Member) {
   if (!env.PASSKIT_API_URL) {
     throw new Error("PASSKIT_API_URL environment variable is not set");
@@ -79,7 +81,14 @@ export async function enrollMember({
   }
 
   try {
-    const params = { programId, tierId, externalId, status, person };
+    const params = {
+      programId,
+      tierId,
+      externalId,
+      status,
+      person,
+      tierPoints,
+    };
     console.log("Request Params:", params);
     const response = await fetch(url, {
       method: "POST",
@@ -120,6 +129,16 @@ export async function handleEnrollMember(customer: CustomerSS) {
     const sortedTierLevels = [...tierLevels!].sort(
       (a, b) => a?.pointsRequired! - b?.pointsRequired!
     );
+
+    // Verificar si el usuario completó su perfil de usuario al enrollar
+    const isProfileComplete = Boolean(
+      customer?.name &&
+        customer.lastName &&
+        customer.email &&
+        customer.phone &&
+        customer.birthdate
+    );
+
     // Enrollar en PassKit
     const { data: passkitMember } = await enrollMember({
       externalId: customer.id,
@@ -132,6 +151,9 @@ export async function handleEnrollMember(customer: CustomerSS) {
         emailAddress: customer?.email || "",
         mobileNumber: customer?.phone || "",
       },
+      // Si el perfil está completo, asignar 1000 puntos adicionales
+      // Si no, asignar solo 1000 puntos
+      tierPoints: 1000 + (isProfileComplete ? 1000 : 0), // Asignar puntos por completar el perfil
     });
 
     console.log("passkitMember", passkitMember);
@@ -221,6 +243,21 @@ export async function handleCompleteProfileReward(customer: CustomerSS) {
       console.log(
         `Profile completion reward created for customer ${customer.id}.`
       );
+
+      if (customer.passKitMemberId) {
+        // Si el cliente tiene un passKitMemberId, asignar los puntos ganados
+        try {
+          await earnPoints({
+            memberId: customer.passKitMemberId as string,
+            points: 1000,
+          });
+          console.log(`Points earned for customer ${customer.id} in PassKit.`);
+        } catch (error) {
+          console.log(
+            `Error earning points for customer ${customer.id}: ${error}`
+          );
+        }
+      }
     } else {
       console.log(
         `No profile completion reward available for customer ${customer.id}.`
@@ -230,5 +267,62 @@ export async function handleCompleteProfileReward(customer: CustomerSS) {
     console.log(
       `Customer ${customer.id} already has a profile or has received the reward.`
     );
+  }
+}
+
+// earn points for a member in a program
+export async function earnPoints({
+  memberId,
+  points,
+  tierId = "", // optional tierId, can be empty
+}: {
+  memberId: string;
+  points: number;
+  tierId?: string; // optional tierId, can be empty
+}) {
+  if (!env.PASSKIT_API_URL) {
+    throw new Error("PASSKIT_API_URL environment variable is not set");
+  }
+
+  if (!memberId || !points) {
+    throw new Error("Member ID and Points are required");
+  }
+
+  if (typeof memberId !== "string" || typeof points !== "number") {
+    throw new Error("Member ID must be a string and Points must be a number");
+  }
+
+  const url = env.PASSKIT_API_URL + `/members/member/points/earn`;
+
+  const token = apiKeyAuth(env.PASSKIT_REST_SECRET, env.PASSKIT_REST_KEY);
+
+  // Ensure the token is generated successfully
+  if (!token) {
+    throw new Error("Failed to generate API token");
+  }
+
+  try {
+    const response = await fetch(url, {
+      method: "PUT",
+      body: JSON.stringify({ id: memberId, tierPoints: points, tierId }),
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: token,
+      },
+    });
+    console.log("Earned Points Response:", response);
+
+    if (!response.ok) {
+      throw new Error(`Response status: ${response.status}`);
+    }
+
+    const json = await response.json();
+    console.log(json);
+    return { success: true, data: json };
+  } catch (error) {
+    let message = "Unknown Error";
+    if (error instanceof Error) message = error.message;
+
+    return { success: false, message };
   }
 }
