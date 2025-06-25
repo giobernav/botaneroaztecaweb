@@ -54,9 +54,7 @@ const TiersInfo = () => {
       <PopoverContent>
         <div className="px-1 py-2">
           <div className="text-small font-bold">Niveles de Lealtad</div>
-          <div className="text-tiny">
-            ¡Gana 1.000 puntos por cada € gastado!
-          </div>
+          <div className="text-tiny">¡Gana 100 puntos por cada € gastado!</div>
           {loading ? (
             <Skeleton
               className="w-full h-20 mt-2"
