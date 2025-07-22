@@ -56,7 +56,7 @@ export default function FormComp() {
 
       if (customerId) {
         // SET customerId & token state
-        setCustomerId(customerId);
+        setCustomerId(customerId?.trim());
         // setToken(token);
       } else {
         setCustomerId(undefined);

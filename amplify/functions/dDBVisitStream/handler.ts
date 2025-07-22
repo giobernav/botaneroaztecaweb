@@ -38,15 +38,14 @@ export const handler: DynamoDBStreamHandler = async (event) => {
       // Al registrar una visita:
       const newRecord = recordNewValues;
       if (newRecord) {
+        const parsedCustomerId = (newRecord.customerId as string).trim();
         // Consultar Customer para checar la fecha de inicio del tier(nivel)
-        const retrievedCustomer = await getCustomer(
-          newRecord.customerId as string
-        );
+        const retrievedCustomer = await getCustomer(parsedCustomerId);
         console.log("retrievedCustomer", retrievedCustomer);
 
         if (!retrievedCustomer) {
           logger.warn(
-            `Customer with ID ${newRecord.customerId} not found. Skipping tier level handling.`
+            `Customer with ID ${parsedCustomerId} not found. Skipping tier level handling.`
           );
           continue;
         }
@@ -55,7 +54,7 @@ export const handler: DynamoDBStreamHandler = async (event) => {
         if (newRecord?.pointsEarned?.value) {
           // Update tier points in PassKit
           logger.info(
-            `Earning points for customer ${newRecord.customerId}: ${newRecord.pointsEarned.value}`
+            `Earning points for customer ${parsedCustomerId}: ${newRecord.pointsEarned.value}`
           );
           // Call the function to earn points
           // This function should handle the API call to PassKit
@@ -66,17 +65,17 @@ export const handler: DynamoDBStreamHandler = async (event) => {
             });
           } catch (error) {
             console.log(
-              `Error earning points for customer ${newRecord.customerId}: ${error}`
+              `Error earning points for customer ${parsedCustomerId}: ${error}`
             );
           }
         }
 
         // Consultar Rewards disponibles y asignar
-        await handleRewards(newRecord.customerId as string);
+        await handleRewards(parsedCustomerId);
 
         // Consultar y actualizar el nivel del Customer
         await handleTierLevels(
-          newRecord.customerId as string,
+          parsedCustomerId,
           retrievedCustomer,
           env.DEFAULT_COMPANY || "botaneroazteca"
         );
