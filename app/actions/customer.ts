@@ -94,3 +94,19 @@ export async function getCustomer(userId: string) {
 
   return customer;
 }
+
+export async function listCustomers(limit = 10) {
+  const { data: customers, errors } = await cookiesClient.models.Customer.list({
+    authMode: "userPool",
+    sortDirection: "DESC",
+    limit,
+    selectionSet: customerSelectionSet,
+  });
+
+  if (errors) {
+    console.log("listCustomers errors", errors);
+    return [];
+  }
+
+  return customers || [];
+}

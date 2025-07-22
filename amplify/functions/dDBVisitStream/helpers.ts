@@ -73,13 +73,17 @@ type CustomerRewardSS = SelectionSet<
 >;
 
 export const getCompany = async (id: string = "botaneroazteca") => {
-  const { data } = await client.models.Company.get({ id });
+  const { data, errors } = await client.models.Company.get({ id });
+
+  if (errors) {
+    console.log("getCustomer errors", errors);
+  }
 
   return data;
 };
 
 export const getCustomer = async (customerId: string) => {
-  const { data } = await client.models.Customer.get(
+  const { data, errors } = await client.models.Customer.get(
     {
       id: customerId,
     },
@@ -87,6 +91,10 @@ export const getCustomer = async (customerId: string) => {
       selectionSet: customerSelectionSet,
     }
   );
+
+  if (errors) {
+    console.log("getCustomer errors", errors);
+  }
 
   return data;
 };
