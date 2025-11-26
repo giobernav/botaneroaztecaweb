@@ -19,6 +19,7 @@ import {
   ModalBody,
   ModalFooter,
 } from "@heroui/modal";
+import { resolveRewardImage } from "../../loyalty/rewards/rewardImage";
 
 const client = generateClient<Schema>();
 
@@ -108,13 +109,10 @@ const CustomerRewardsComp = ({ customerId }: { customerId?: string }) => {
               <CardBody className="p-0">
                 <div className="relative">
                   <img
-                    src={
-                      reward.reward.image || reward.category === "WELCOME"
-                        ? "/welcome_reward.png"
-                        : reward.category === "PROFILLE"
-                        ? "/profile_reward.png"
-                        : "/reward.png"
-                    }
+                    src={resolveRewardImage({
+                      image: reward.reward.image,
+                      category: reward.category,
+                    })}
                     alt={reward.reward.title || undefined}
                     className="w-full h-44 object-cover"
                   />

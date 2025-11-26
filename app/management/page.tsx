@@ -6,14 +6,14 @@ import Link from "next/link";
 
 export default function ManagementPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br p-4">
+    <div className="min-h-screen bg-gradient-to-br from-primary-50 via-background to-secondary-50 p-4">
       <div className="max-w-md mx-auto pt-12">
         <div className="rounded-xl shadow-lg bg-default-50 p-8 space-y-8">
           <div className="text-center space-y-3">
             <h1 className="text-2xl font-semibold">Programa de lealtad</h1>
             <p>
-              Elija una acción a continuación para canjear las recompensas
-              obtenidas o registrar una visita.
+              Elige una acción para canjear recompensas o registrar una nueva
+              visita.
             </p>
           </div>
 
@@ -46,7 +46,7 @@ export default function ManagementPage() {
                 <Icon icon="lucide:check-circle" className="text-xl" />
               }
             >
-              Registar visita
+              Registrar visita
             </Button>
           </div>
 

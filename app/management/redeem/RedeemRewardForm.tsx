@@ -11,7 +11,7 @@ import { Scanner } from "@yudiel/react-qr-scanner";
 import PhoneInput from "react-phone-number-input";
 import { useCountdown } from "usehooks-ts";
 import Link from "next/link";
-import { redirect, RedirectType } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 import es from "react-phone-number-input/locale/es";
 import { RedeemActionState, redeemFormInitialState } from "./schema";
@@ -22,6 +22,7 @@ export function RedeemRewardForm() {
     countStart: 5,
     intervalMs: 1000,
   });
+  const router = useRouter();
   const [isActive, setIsActive] = useState(true);
   const [isQRMode, setIsQRMode] = useState(true);
   const [rewardId, setRewardId] = useState<string | undefined>();
@@ -33,8 +34,27 @@ export function RedeemRewardForm() {
     [isQRMode, rewardId]
   );
 
+  const handleModeChange = useCallback((selected: boolean) => {
+    setIsQRMode(selected);
+
+    if (!selected) {
+      setRewardId(undefined);
+      setIsActive(false);
+      setState((prev) => ({
+        ...prev,
+        errors: undefined,
+        fieldErrors: {
+          ...prev.fieldErrors,
+          rewardId: undefined,
+          customerPhone: undefined,
+        },
+      }));
+    } else {
+      setIsActive(true);
+    }
+  }, []);
+
   const onScan = async (scan: any) => {
-    console.log("scan result", scan);
     setIsActive(false);
 
     if (scan?.[0]?.rawValue) {
@@ -48,8 +68,6 @@ export function RedeemRewardForm() {
       const rewardId = scan?.[0]?.rawValue;
 
       // console.log("token", token);
-      console.log("rewardId", rewardId);
-
       if (rewardId) {
         // SET customerId & token state
         setRewardId(rewardId);
@@ -72,7 +90,6 @@ export function RedeemRewardForm() {
     setPending(true);
     const formData = new FormData(_event.currentTarget as HTMLFormElement);
     const result = await formAction()(formData);
-    console.log("result", result);
     setState(result);
     setPending(false);
 
@@ -89,16 +106,20 @@ export function RedeemRewardForm() {
 
   useEffect(() => {
     if (count == 0) {
-      redirect("/management", RedirectType.push);
+      router.push("/management");
     }
-  }, [count]);
+  }, [count, router]);
 
   return (
-    <Form className="space-y-4" onSubmit={handleSubmit}>
+    <Form
+      className="space-y-4"
+      onSubmit={handleSubmit}
+      validationErrors={state.fieldErrors}
+    >
       <div className="flex items-center justify-between p-2 rounded-lg">
         <Switch
           isSelected={isQRMode}
-          onValueChange={setIsQRMode}
+          onValueChange={handleModeChange}
           size="lg"
           color="primary"
           startContent={<Icon icon="lucide:qr-code" className="text-xl" />}
@@ -138,7 +159,17 @@ export function RedeemRewardForm() {
             defaultCountry="ES"
             inputComponent={Input}
             onChange={(value) => {
-              console.log("phone", value);
+              setState((prev) => ({
+                ...prev,
+                fieldErrors: {
+                  ...prev.fieldErrors,
+                  customerPhone: undefined,
+                },
+                form: {
+                  ...prev.form,
+                  customerPhone: value || "",
+                },
+              }));
             }}
             name="customerPhone"
             type="tel"
@@ -147,6 +178,11 @@ export function RedeemRewardForm() {
             defaultValue={state?.form?.customerPhone}
             className="w-full"
           />
+          {state.fieldErrors?.customerPhone ? (
+            <p className="text-sm text-danger" role="alert">
+              {state.fieldErrors.customerPhone}
+            </p>
+          ) : null}
 
           <Input
             label="ID de la recompensa"
@@ -156,6 +192,23 @@ export function RedeemRewardForm() {
             isRequired
             fullWidth
             defaultValue={state?.form?.rewardId}
+            errorMessage={state.fieldErrors?.rewardId}
+            validationState={
+              state.fieldErrors?.rewardId ? "invalid" : undefined
+            }
+            onValueChange={(value) =>
+              setState((prev) => ({
+                ...prev,
+                fieldErrors: {
+                  ...prev.fieldErrors,
+                  rewardId: undefined,
+                },
+                form: {
+                  ...prev.form,
+                  rewardId: value,
+                },
+              }))
+            }
           />
         </div>
       )}

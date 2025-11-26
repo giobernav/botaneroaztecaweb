@@ -14,7 +14,7 @@ import { NumberInput } from "@heroui/number-input";
 import { I18nProvider } from "@react-aria/i18n";
 import { Scanner } from "@yudiel/react-qr-scanner";
 import { registerVisit } from "@/app/actions/visit";
-import { redirect, RedirectType } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useCountdown } from "usehooks-ts";
 import { Alert } from "@heroui/alert";
 import PhoneInput from "react-phone-number-input";
@@ -25,6 +25,7 @@ export default function FormComp() {
     countStart: 5,
     intervalMs: 1000,
   });
+  const router = useRouter();
   const [isActive, setIsActive] = useState(true);
   const [isQRMode, setIsQRMode] = useState(false);
   const [pending, setPending] = useState(false);
@@ -38,8 +39,26 @@ export default function FormComp() {
     [isQRMode, customerId]
   );
 
+  const handleModeChange = useCallback((selected: boolean) => {
+    setIsQRMode(selected);
+
+    if (selected) {
+      setIsActive(true);
+    } else {
+      setCustomerId(undefined);
+      setIsActive(false);
+      setState((prev) => ({
+        ...prev,
+        errors: undefined,
+        fieldErrors: {
+          ...prev.fieldErrors,
+          customerPhone: undefined,
+        },
+      }));
+    }
+  }, []);
+
   const onScan = async (scan: any) => {
-    console.log("scan result", scan);
     setIsActive(false);
 
     if (scan?.[0]?.rawValue) {
@@ -52,8 +71,6 @@ export default function FormComp() {
       const customerId = scan?.[0]?.rawValue;
 
       // console.log("token", token);
-      console.log("customerId", customerId);
-
       if (customerId) {
         // SET customerId & token state
         setCustomerId(customerId?.trim());
@@ -76,7 +93,6 @@ export default function FormComp() {
     setPending(true);
     const formData = new FormData(_event.currentTarget as HTMLFormElement);
     const result = await formAction()(formData);
-    console.log("result", result);
     setState(result);
     setPending(false);
 
@@ -93,9 +109,9 @@ export default function FormComp() {
 
   useEffect(() => {
     if (count == 0) {
-      redirect("/management", RedirectType.push);
+      router.push("/management");
     }
-  }, [count]);
+  }, [count, router]);
 
   return (
     <Form
@@ -105,7 +121,7 @@ export default function FormComp() {
     >
       <Switch
         isSelected={isQRMode}
-        onValueChange={setIsQRMode}
+        onValueChange={handleModeChange}
         size="lg"
         color="primary"
         startContent={<Icon icon="lucide:qr-code" className="text-xl" />}
@@ -115,22 +131,39 @@ export default function FormComp() {
       </Switch>
 
       {!isQRMode ? (
-        <PhoneInput
-          labels={es}
-          international
-          countryCallingCodeEditable={false}
-          defaultCountry="ES"
-          inputComponent={Input}
-          onChange={(value) => {
-            console.log("phone", value);
-          }}
-          name="customerPhone"
-          type="tel"
-          label="Número de celular"
-          placeholder="Ingresa tu número de celular"
-          defaultValue={state?.form?.customerPhone}
-          className="w-full"
-        />
+        <>
+          <PhoneInput
+            labels={es}
+            international
+            countryCallingCodeEditable={false}
+            defaultCountry="ES"
+            inputComponent={Input}
+            onChange={(value) =>
+              setState((prev) => ({
+                ...prev,
+                fieldErrors: {
+                  ...prev.fieldErrors,
+                  customerPhone: undefined,
+                },
+                form: {
+                  ...prev.form,
+                  customerPhone: value || "",
+                },
+              }))
+            }
+            name="customerPhone"
+            type="tel"
+            label="Número de celular"
+            placeholder="Ingresa tu número de celular"
+            defaultValue={state?.form?.customerPhone}
+            className="w-full"
+          />
+          {state.fieldErrors?.customerPhone ? (
+            <p className="text-sm text-danger" role="alert">
+              {state.fieldErrors.customerPhone}
+            </p>
+          ) : null}
+        </>
       ) : (
         <div className="relative w-64 h-64 mx-auto">
           <Scanner
@@ -158,6 +191,21 @@ export default function FormComp() {
         placeholder="Ingresa la mesa"
         label="Mesa"
         defaultValue={state?.form?.table}
+        errorMessage={state.fieldErrors?.table}
+        validationState={state.fieldErrors?.table ? "invalid" : undefined}
+        onValueChange={(value) =>
+          setState((prev) => ({
+            ...prev,
+            fieldErrors: {
+              ...prev.fieldErrors,
+              table: undefined,
+            },
+            form: {
+              ...prev.form,
+              table: value,
+            },
+          }))
+        }
       />
 
       <NumberInput
@@ -172,7 +220,29 @@ export default function FormComp() {
         inputMode="numeric"
         label="Monto de la cuenta"
         hideStepper
-        defaultValue={+(state?.form?.billAmount || "")}
+        defaultValue={
+          state?.form?.billAmount !== undefined && state.form.billAmount !== ""
+            ? Number(state.form.billAmount)
+            : undefined
+        }
+        errorMessage={state.fieldErrors?.billAmount}
+        validationState={state.fieldErrors?.billAmount ? "invalid" : undefined}
+        onValueChange={(value) =>
+          setState((prev) => ({
+            ...prev,
+            fieldErrors: {
+              ...prev.fieldErrors,
+              billAmount: undefined,
+            },
+            form: {
+              ...prev.form,
+              billAmount:
+                value !== null && Number.isFinite(value)
+                  ? value.toString()
+                  : "",
+            },
+          }))
+        }
       />
 
       <I18nProvider locale="es-ES">
@@ -189,6 +259,21 @@ export default function FormComp() {
           granularity="day"
           minValue={today(getLocalTimeZone()).subtract({ days: 5 })}
           maxValue={today(getLocalTimeZone())}
+          errorMessage={state.fieldErrors?.datetime}
+          validationState={state.fieldErrors?.datetime ? "invalid" : undefined}
+          onChange={(value) =>
+            setState((prev) => ({
+              ...prev,
+              fieldErrors: {
+                ...prev.fieldErrors,
+                datetime: undefined,
+              },
+              form: {
+                ...prev.form,
+                datetime: value?.toString(),
+              },
+            }))
+          }
         />
       </I18nProvider>
 

@@ -29,16 +29,19 @@ export async function redeemReward(
   // Return early if the form data is invalid
   if (!validationResult.success) {
     const errors: any = validationResult.error.flatten().fieldErrors;
-    let fieldErrors = {};
-    Object.keys(errors).map((x: string) => {
-      fieldErrors = { ...fieldErrors, [x]: errors[x][0] };
-    });
+    const fieldErrors = Object.keys(errors).reduce(
+      (acc, key) => ({
+        ...acc,
+        [key]: errors[key]?.[0],
+      }),
+      {} as RedeemActionState["fieldErrors"]
+    );
 
     return {
       success: false,
       form: {
         customerPhone: form.customerPhone as string,
-        rewardId: form.table as string,
+        rewardId: form.rewardId as string,
       },
       fieldErrors,
     };
@@ -69,9 +72,9 @@ export async function redeemReward(
   } else {
     // If no customerRewardId is provided, we assume the form contains the necessary data
     const rawFormData = {
-      customerPhone: validationResult.data.customerPhone,
-      rewardId: validationResult.data.rewardId,
-    } as RedeemActionState["form"];
+      customerPhone: validationResult.data.customerPhone ?? "",
+      rewardId: validationResult.data.rewardId ?? "",
+    };
 
     console.log("rawFormData", rawFormData);
 

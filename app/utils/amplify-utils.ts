@@ -24,7 +24,7 @@ export async function AuthGetCurrentUserServer() {
     });
     return currentUser;
   } catch (error) {
-    console.error(error);
+    console.log(error);
   }
 }
 
@@ -39,6 +39,6 @@ export async function AuthGetCurrentSessionServer() {
     // console.log("User groups:", groups);
     return currentSession;
   } catch (error) {
-    console.error(error);
+    console.log(error);
   }
 }

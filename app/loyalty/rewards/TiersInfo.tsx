@@ -13,7 +13,7 @@ import Link from "next/link";
 
 const TiersInfo = () => {
   const [loading, setLoading] = useState(true);
-  const [tiers, setTiers] = useState<any[]>([]);
+  const [tiers, setTiers] = useState<Schema["TierLevel"]["type"][]>([]);
 
   useEffect(() => {
     // get company data
@@ -25,8 +25,11 @@ const TiersInfo = () => {
           },
           { authMode: "userPool" }
         );
-        console.log("Company Data:", companyData);
-        setTiers(companyData?.tierLevels || []);
+        setTiers(
+          Array.isArray(companyData?.tierLevels)
+            ? (companyData?.tierLevels as Schema["TierLevel"]["type"][])
+            : []
+        );
         setLoading(false);
       } catch (error) {
         console.error("Error fetching company data:", error);
@@ -72,11 +75,18 @@ const TiersInfo = () => {
             </div>
           ) : (
             <ul className="list-disc list-inside my-2">
-              {tiers.map((tier) => (
-                <li key={tier.id}>
-                  {tier.title}: {tier.discount}% de descuento
-                </li>
-              ))}
+              {tiers.map((tier) => {
+                if (!tier) return null;
+
+                const discountLabel =
+                  typeof tier.discount === "number" ? `${tier.discount}%` : "—";
+
+                return (
+                  <li key={tier.id || `${tier.title}-${discountLabel}`}>
+                    {tier.title || "Nivel"}: {discountLabel} de descuento
+                  </li>
+                );
+              })}
             </ul>
           )}
           <div className="text-tiny text-default-500 mt-2">

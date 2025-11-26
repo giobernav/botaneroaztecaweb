@@ -6,50 +6,29 @@ import NextLink from "next/link";
 import { usePathname } from "next/navigation";
 import { ProfileHeader } from "./ProfileHeader";
 import { Schema } from "@/amplify/data/resource";
-import { SelectionSet } from "aws-amplify/api";
 import { useEffect, useMemo, useState } from "react";
 import CompleteProfileComp from "@/app/loyalty/CompleteProfileComp";
-import { useAuthenticator } from "@aws-amplify/ui-react";
-import {
-  fetchUserAttributes,
-  FetchUserAttributesOutput,
-} from "aws-amplify/auth";
 import { getUrl } from "aws-amplify/storage";
-
-const customerSelectionSet = [
-  "id",
-  "phone",
-  "name",
-  "lastName",
-  "email",
-  "birthdate",
-  "tierEndDate",
-  "memberTier",
-  "profilePicture",
-  "passKitMemberId",
-] as const;
+import { LoyaltyCustomer } from "@/app/loyalty/selectionSets";
 
 export default function LoyaltyLayoutComp({
   customer,
   totalPoints,
   hasNextTier = false,
   neededPoints = 0,
+  surplusPoints = 0,
   children,
   tiers = [],
 }: {
-  customer: SelectionSet<
-    Schema["Customer"]["type"],
-    typeof customerSelectionSet
-  > | null;
+  customer: LoyaltyCustomer | null;
   totalPoints: number;
   hasNextTier?: boolean;
   neededPoints?: number;
+  surplusPoints?: number;
   children: React.ReactNode;
   tiers?: Schema["TierLevel"]["type"][] | undefined; // Assuming you have a TierLevel type in your schema
 }) {
   const pathname = usePathname();
-  const { user } = useAuthenticator((context) => [context.user]);
-  const [attrs, setAttrs] = useState<FetchUserAttributesOutput | undefined>();
   const [signedUrl, setSignedUrl] = useState<URL | string | undefined>();
 
   const customerName = useMemo(() => {
@@ -59,18 +38,6 @@ export default function LoyaltyLayoutComp({
         }`
       : "";
   }, [customer?.name, customer?.lastName]);
-
-  useEffect(() => {
-    const fetch = async () => {
-      const userAttrs = await fetchUserAttributes();
-      setAttrs(userAttrs);
-    };
-    if (user?.userId) {
-      fetch();
-    } else {
-      setAttrs(undefined);
-    }
-  }, [user?.userId]);
 
   useEffect(() => {
     const fetch = async () => {
@@ -96,7 +63,7 @@ export default function LoyaltyLayoutComp({
 
   return (
     <div className="max-w-5xl mx-auto">
-      <CompleteProfileComp customer={customer} userAttributes={attrs} />
+      <CompleteProfileComp customer={customer} />
 
       <ProfileHeader
         name={customerName}
@@ -107,6 +74,7 @@ export default function LoyaltyLayoutComp({
         totalPoints={totalPoints}
         hasNextTier={hasNextTier}
         neededPoints={neededPoints}
+        surplusPoints={surplusPoints}
       />
 
       <Card className="overflow-visible">

@@ -6,9 +6,9 @@ import { Button } from "@heroui/button";
 import NextLink from "next/link";
 import { Icon } from "@iconify/react";
 import parsePhoneNumber from "libphonenumber-js";
-// import { formatNumber } from "@/app/utils/formatter";
 import PointsComp from "@/app/loyalty/rewards/PointsComp";
 import { Chip } from "@heroui/chip";
+import { useMemo } from "react";
 
 interface ProfileHeaderProps {
   name: string;
@@ -19,6 +19,7 @@ interface ProfileHeaderProps {
   totalPoints: number;
   hasNextTier?: boolean;
   neededPoints?: number;
+  surplusPoints?: number;
 }
 
 export function ProfileHeader({
@@ -30,7 +31,19 @@ export function ProfileHeader({
   totalPoints,
   hasNextTier = false,
   neededPoints = 0,
+  surplusPoints = 0,
 }: ProfileHeaderProps) {
+  const formattedPhone = useMemo(() => {
+    if (!phone) return "";
+
+    try {
+      const parsed = parsePhoneNumber(phone);
+      return parsed ? parsed.formatInternational() : phone;
+    } catch (error) {
+      return phone;
+    }
+  }, [phone]);
+
   return (
     <div className="flex flex-col  items-center md:items-start gap-4 p-4 bg-content1 rounded-lg mb-6">
       <Avatar
@@ -42,9 +55,7 @@ export function ProfileHeader({
 
       <div className="flex flex-col items-center md:items-start gap-1 flex-grow">
         <h2 className="text-xl font-bold">{name || "Bienvenid@ de nuevo"}</h2>
-        <p className="text-default-500">
-          {parsePhoneNumber(phone)?.formatInternational()}
-        </p>
+        <p className="text-default-500">{formattedPhone}</p>
         <div className="flex items-center gap-2 mt-1">
           <div className="text-default-500">
             Nivel{" "}
@@ -73,6 +84,7 @@ export function ProfileHeader({
         userPoints={totalPoints}
         hasNextTier={hasNextTier}
         nextTierPoints={neededPoints}
+        surplusPoints={surplusPoints}
       />
 
       <Button

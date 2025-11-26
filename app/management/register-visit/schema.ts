@@ -22,8 +22,15 @@ export const visitFormSchema = z.object({
     })
     .nonempty("Ingresa el monto de la cuenta")
     .refine((n) => +n > 0, "Ingresa el monto de la cuenta"),
-  datetime: z.string().date(),
+  datetime: z.coerce.date(),
 });
+
+export const visitFormFields = [
+  "customerPhone",
+  "table",
+  "billAmount",
+  "datetime",
+] as const;
 
 export const visitFormInitialState = {
   success: undefined,
@@ -34,12 +41,14 @@ export const visitFormInitialState = {
 
 export type VisitActionState = {
   success?: boolean;
-  form?: z.infer<typeof visitFormSchema>;
-  fieldErrors?: {
-    customerPhone?: string[];
-    table?: string[];
-    billAmount?: string[];
-    datetime?: string[];
+  form?: {
+    customerPhone?: string;
+    table?: string;
+    billAmount?: string;
+    datetime?: string;
   };
+  fieldErrors?: Partial<
+    Record<"customerPhone" | "table" | "billAmount" | "datetime", string>
+  >;
   errors?: string[];
 };

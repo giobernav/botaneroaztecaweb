@@ -1,14 +1,13 @@
-import { getCustomer } from "@/app/actions/customer";
-import { listVisits } from "@/app/actions/visit";
+"use client";
+
 import LastVisitsComp from "@/app/components/loyalty/LastVisitsComp";
-import { AuthGetCurrentUserServer } from "@/app/utils/amplify-utils";
 import { formatNumber } from "@/app/utils/formatter";
 import { Divider } from "@heroui/divider";
+import { useLoyaltyData } from "../LoyaltyDataProvider";
 
-export default async function LoyaltyLastVisitsPage() {
-  const user = await AuthGetCurrentUserServer();
-  // visitas del cliente en los ultimos 180 días
-  const { visits: lastVisits = [] } = await listVisits(user?.userId!);
+export default function LoyaltyLastVisitsPage() {
+  const { visits } = useLoyaltyData();
+  const lastVisits = visits || [];
 
   return (
     <div className="p-4">
@@ -18,20 +17,20 @@ export default async function LoyaltyLastVisitsPage() {
           <span className="text-sm text-default-500">Últimos 180 días</span>
         </div>
 
-        <LastVisitsComp visits={lastVisits!} />
+        <LastVisitsComp visits={lastVisits} />
 
         <Divider />
 
         <div className="flex justify-between items-center">
           <div>
             <p className="text-sm text-default-500">Visitas</p>
-            <p className="text-lg font-semibold">{lastVisits?.length}</p>
+            <p className="text-lg font-semibold">{lastVisits.length}</p>
           </div>
           <div>
             <p className="text-sm text-default-500">Total gastado</p>
             <p className="text-lg font-semibold">
               {formatNumber(
-                lastVisits?.reduce(
+                lastVisits.reduce(
                   (sum, visit) => sum + (visit?.billAmount || 0) / 100,
                   0
                 )
@@ -42,7 +41,7 @@ export default async function LoyaltyLastVisitsPage() {
             <p className="text-sm text-default-500">Puntos ganados</p>
             <p className="text-lg font-semibold text-success">
               +
-              {lastVisits?.reduce(
+              {lastVisits.reduce(
                 (sum, visit) => sum + (visit?.pointsEarned || 0),
                 0
               )}

@@ -1,54 +1,36 @@
 "use client";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import { Progress } from "@heroui/progress";
-import { Schema } from "@/amplify/data/resource";
-import { SelectionSet } from "aws-amplify/api";
-import { FetchUserAttributesOutput } from "aws-amplify/auth";
 import { Button } from "@heroui/button";
 import NextLink from "next/link";
-
-const customerSelectionSet = [
-  "id",
-  "phone",
-  "name",
-  "lastName",
-  "email",
-  "birthdate",
-  "tierEndDate",
-  "memberTier",
-  "profilePicture",
-  "passKitMemberId",
-] as const;
+import { LoyaltyCustomer } from "./selectionSets";
 
 export default function CompleteProfileComp({
   customer,
 }: {
-  customer: SelectionSet<
-    Schema["Customer"]["type"],
-    typeof customerSelectionSet
-  > | null;
-  userAttributes?: FetchUserAttributesOutput;
+  customer: LoyaltyCustomer | null;
 }) {
-  const [profileProgress, setProfileProgress] = useState({
-    emailCompleted: false,
-    nameCompleted: false,
-    birthdate: false,
-  });
-
-  useEffect(() => {
-    if (customer) {
-      setProfileProgress({
-        emailCompleted: !!customer.email,
-        nameCompleted: !!(customer.name && customer.lastName),
-        birthdate: !!customer.birthdate,
-      });
-    }
-  }, [customer]);
-
   const profileCompleted = useMemo(
-    () => Object.values(profileProgress).reduce((sum, val) => sum && val, true),
-    [profileProgress]
+    () =>
+      !!customer?.email &&
+      !!(customer?.name && customer?.lastName) &&
+      !!customer?.birthdate,
+    [customer?.email, customer?.name, customer?.lastName, customer?.birthdate]
   );
+
+  const completedStepsCount = useMemo(() => {
+    const steps = [
+      !!customer?.email,
+      !!(customer?.name && customer?.lastName),
+      !!customer?.birthdate,
+    ];
+    return steps.reduce((sum, step) => sum + (step ? 1 : 0), 0);
+  }, [
+    customer?.email,
+    customer?.name,
+    customer?.lastName,
+    customer?.birthdate,
+  ]);
 
   return profileCompleted ? null : (
     <section className="max-w-sm mb-6 bg-warning-50 p-4 rounded-lg">
@@ -70,10 +52,7 @@ export default function CompleteProfileComp({
         size="md"
         color="warning"
         aria-label="Progreso del perfil"
-        value={Object.values(profileProgress).reduce(
-          (sum, val) => sum + (val ? 1 : 0),
-          0
-        )}
+        value={completedStepsCount}
       />
       <Button
         as={NextLink}

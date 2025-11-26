@@ -1,27 +1,35 @@
-import { headers } from "next/headers";
+"use client";
+
+import { useMemo } from "react";
 import { UAParser } from "ua-parser-js";
 
 import LoyaltyPageComp from "../components/loyalty/LoyaltyPageComp";
-import { AuthGetCurrentUserServer } from "../utils/amplify-utils";
-import { getCustomer } from "../actions/customer";
+import { useLoyaltyData } from "./LoyaltyDataProvider";
 
-export default async function LoyaltyPage() {
-  const user = await AuthGetCurrentUserServer();
-  const customer = await getCustomer(user?.userId!);
+export default function LoyaltyPage() {
+  const { userId, customer } = useLoyaltyData();
+  const deviceInfo = useMemo(() => {
+    if (typeof window === "undefined") {
+      return { isMobile: false, os: undefined as string | undefined };
+    }
 
-  const headersList = await headers();
-  const userAgent = headersList.get("user-agent");
-  const { device, os } = UAParser(userAgent || "");
+    const parser = new UAParser(window.navigator.userAgent);
+    const result = parser.getResult();
+    return {
+      isMobile: result.device?.type === "mobile",
+      os: result.os?.name || undefined,
+    };
+  }, []);
 
-  // console.log(device.type); // N900
-  // console.log(device.vendor); // N900
-  // console.log(os.name); // N900
+  if (!userId) {
+    return null;
+  }
 
   return (
     <LoyaltyPageComp
-      isMobile={device.is("mobile")}
-      os={os.name}
-      customerId={user?.userId!}
+      isMobile={deviceInfo.isMobile}
+      os={deviceInfo.os}
+      customerId={userId}
       passKitMemberId={customer?.passKitMemberId || ""}
     />
   );

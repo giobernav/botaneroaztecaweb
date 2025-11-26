@@ -9,6 +9,7 @@ import { Schema } from "@/amplify/data/resource";
 import { useEffect, useState } from "react";
 import dayjs from "dayjs";
 import CustomerRewardsComp from "@/app/components/loyalty/CustomerRewardsComp";
+import { resolveRewardImage } from "./rewardImage";
 
 const client = generateClient<Schema>();
 
@@ -91,13 +92,10 @@ const RewardsComp = ({
                 <CardBody className="p-0">
                   <div className="relative">
                     <img
-                      src={
-                        reward.image || reward.category === "WELCOME"
-                          ? "/welcome_reward.png"
-                          : reward.category === "PROFILLE"
-                          ? "/profile_reward.png"
-                          : "/reward.png"
-                      }
+                      src={resolveRewardImage({
+                        image: reward.image,
+                        category: reward.category,
+                      })}
                       alt={reward.title || undefined}
                       className="w-full h-44 object-cover filter grayscale"
                     />

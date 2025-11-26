@@ -25,10 +25,10 @@ export const redeemFormInitialState = {
 
 export type RedeemActionState = {
   success?: boolean;
-  form?: z.infer<typeof redeemFormSchema>;
-  fieldErrors?: {
-    customerPhone?: string[];
-    rewardId?: string[];
+  form?: {
+    customerPhone?: string;
+    rewardId?: string;
   };
+  fieldErrors?: Partial<Record<"customerPhone" | "rewardId", string>>;
   errors?: string[];
 };

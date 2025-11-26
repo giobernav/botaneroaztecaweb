@@ -1,15 +1,10 @@
-import { getCustomer } from "../../actions/customer";
-import { listVisits } from "../../actions/visit";
-import { AuthGetCurrentUserServer } from "../../utils/amplify-utils";
-import RewardsComp from "./RewardsComp";
+"use client";
 
-export default async function LoyaltyRewardsPage() {
-  const user = await AuthGetCurrentUserServer();
-  const customer = await getCustomer(user?.userId!);
-  const { totalPoints } = await listVisits(
-    user?.userId!,
-    customer?.tierEndDate
-  );
+import RewardsComp from "./RewardsComp";
+import { useLoyaltyData } from "../LoyaltyDataProvider";
+
+export default function LoyaltyRewardsPage() {
+  const { customer, totalPoints } = useLoyaltyData();
 
   return (
     <div className="py-4 px-2">

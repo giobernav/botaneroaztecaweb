@@ -1,28 +1,11 @@
 "use client";
 
-import { Schema } from "@/amplify/data/resource";
 import { formatNumber } from "@/app/utils/formatter";
 import { Card, CardBody } from "@heroui/card";
 import { Icon } from "@iconify/react";
-import { SelectionSet } from "aws-amplify/api";
 import dayjs from "dayjs";
-
-const selectionSet = [
-  "id",
-  "status",
-  "customerId",
-  "datetime",
-  "pointsEarned",
-  "billAmount",
-  "createdAt",
-  "updatedAt",
-  "entryType",
-] as const;
-export default function LastVisitsComp({
-  visits,
-}: {
-  visits: SelectionSet<Schema["Visit"]["type"], typeof selectionSet>[];
-}) {
+import { LoyaltyVisit } from "@/app/loyalty/selectionSets";
+export default function LastVisitsComp({ visits }: { visits: LoyaltyVisit[] }) {
   return visits.length === 0 ? (
     <Card>
       <CardBody className="flex flex-col items-center py-8 gap-2">

@@ -7,6 +7,7 @@ import type { Schema } from "../../amplify/data/resource";
 import {
   VisitActionState,
   visitFormSchema,
+  visitFormFields,
 } from "../management/register-visit/schema";
 // import { verifyToken } from "./totp";
 
@@ -19,21 +20,22 @@ export async function registerVisit(
   let customerId = userId;
 
   const form = Object.fromEntries(formData);
-  console.log("form", form);
-
   const validationResult =
     entryType === "QR"
       ? visitFormSchema.partial({ customerPhone: true }).safeParse(form)
       : visitFormSchema.safeParse(form);
-  console.log("validationResult", validationResult);
 
   // Return early if the form data is invalid
   if (!validationResult.success) {
-    const errors: any = validationResult.error.flatten().fieldErrors;
-    let fieldErrors = {};
-    Object.keys(errors).map((x: string) => {
-      fieldErrors = { ...fieldErrors, [x]: errors[x][0] };
-    });
+    const errors = validationResult.error.flatten().fieldErrors;
+    const fieldErrors: VisitActionState["fieldErrors"] = {};
+
+    for (const field of visitFormFields) {
+      const messages = errors[field];
+      if (messages && messages.length) {
+        fieldErrors[field] = messages[0];
+      }
+    }
 
     return {
       success: false,
@@ -113,12 +115,11 @@ export async function registerVisit(
     customerId,
     status: "ACTIVE",
     entryType,
-    datetime: new Date(validationResult.data.datetime).toISOString(),
+    datetime: validationResult.data.datetime.toISOString(),
     table: validationResult.data.table,
     billAmount,
     pointsEarned: billAmount,
   } as Schema["Visit"]["createType"];
-  console.log("rawFormData", rawFormData);
 
   // mutate data
   const { errors, data: newVisit } = await cookiesClient.models.Visit.create(
